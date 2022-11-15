@@ -4,12 +4,16 @@
 const express = require('express');
 const { isJwtValid } = require('../middleware/authMiddleware');
 const { createAircraft } = require('../models/aircraftModel');
-const { isReqHeaderValid } = require('../utilities/serverUtils');
+const { 
+    isReqHeaderValid, 
+    createSelfLink 
+} = require('../utilities/serverUtils');
 const { 
     CONTENT_TYPE, 
     APPLICATION_JSON, 
     ANY_MIME_TYPE 
 } = require('../constants/serverConstants');
+const { HOST } = require('../constants/commonConstants');
 
 // instantiate new router object
 const router = express.Router();
@@ -39,8 +43,21 @@ router.post('/', isJwtValid, async (req, res, next) => {
                 .json({ 'Error': 'This endpoint only serves application/json' });
         }
 
-        const id = await createAircraft(req.body.make, req.body.model, req.body.length, req.jwt.sub);
+        // create new aircraft with attributes from request body
+        const id = await createAircraft(
+            req.body.make, 
+            req.body.model, 
+            req.body.length, req.jwt.sub
+        );
 
+        // generate self link for aircraft
+        const aircraftSelfLink = createSelfLink(
+            req.protocol, 
+            req.get(HOST), 
+            req.baseUrl, id
+        );
+
+        // return aircraft object with status code 201
         res.status(201)
             .set(CONTENT_TYPE, APPLICATION_JSON)
             .json({ 
@@ -50,7 +67,7 @@ router.post('/', isJwtValid, async (req, res, next) => {
                 length: req.body.length, 
                 hangar: null,
                 ownerId: req.jwt.sub, 
-                self: "self-link here" 
+                self: aircraftSelfLink 
             });
     } catch (err) {
         next(err);

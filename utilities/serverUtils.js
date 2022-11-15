@@ -14,8 +14,13 @@ const isReqHeaderValid = (headerValue, ...permittedHeaderValues) => {
     return permittedHeaderValues.includes(headerValue);
 }
 
+const createSelfLink = (protocol, host, baseUrl, resourceId) => {
+    return `${protocol}://${host}${baseUrl}/${resourceId}`;
+}
+
 // exports
 module.exports = { 
     isProd, 
-    isReqHeaderValid 
+    isReqHeaderValid,
+    createSelfLink
 }

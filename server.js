@@ -24,6 +24,7 @@ app.engine(HBS, engine({ defaultLayout: MAIN, extname: HBS }));
 app.set(VIEW_ENGINE, HBS);
 
 // app setup
+app.enable('trust proxy');
 app.use(express.json());
 app.use(express.static(__dirname + '/' + PUBLIC));
 
