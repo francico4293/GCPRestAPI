@@ -68,7 +68,7 @@ router.get('/oauth', isStateValid, async (req, res) => {
         }
 
         // create the user in datastore
-        await createUser(userInfo.names[0].givenName, userInfo.names[0].familyName, jwt.sub);
+        await createUser(jwt.sub, userInfo.names[0].givenName, userInfo.names[0].familyName);
 
         // render user info view with end-user's given name and their JSON web token
         res.render(

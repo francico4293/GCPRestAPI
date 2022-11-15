@@ -9,25 +9,25 @@ const { EQUALS_SIGN } = require('../constants/commonConstants');
 const datastore = new Datastore();
 
 const fetchUser = async (userId) => {
-    const query = datastore.createQuery(USERS).filter(USER_ID, EQUALS_SIGN, userId);
+    const key = datastore.key([USERS, userId]);
 
-    const queryResults = await datastore.runQuery(query);
+    const user = await datastore.get(key);
 
-    if (queryResults[0].length === 0) {
+    if (user[0] == null || user[0] == undefined) {
         return null;
     }
 
     return {
-        id: queryResults[0][0].userId,
-        givenName: queryResults[0][0].givenName,
-        familyName: queryResults[0][0].familyName
-    };
+        id: user[0][Datastore.KEY].name,
+        givenName: user[0].givenName,
+        familyName: user[0].familyName
+    }
 }
 
-const createUser = async (givenName, familyName, userId) => {
-    const key = datastore.key(USERS);
+const createUser = async (userId, givenName, familyName) => {
+    const key = datastore.key([USERS, userId]);
 
-    const entity = { key, data: { givenName, familyName, userId } };
+    const entity = { key, data: { givenName, familyName } };
 
     return await datastore.save(entity);
 }
