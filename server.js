@@ -14,7 +14,7 @@ const {
 } = require('./constants/handlebarConstants');
 const { 
     PUBLIC,
-} = require('./constants/commonConstants');
+} = require('./constants/serverConstants');
 
 // initialize new express application
 const app = express();

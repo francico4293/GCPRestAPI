@@ -1,0 +1,59 @@
+'use strict';
+
+// imports
+const { 
+    STRING, 
+    AIRCRAFT_MAKE_REGEX,
+    AIRCRAFT_MODEL_REGEX,
+    INVALID_SPACING_REGEX,
+    SPACE_CHAR
+} = require('../constants/commonConstants');
+
+const isMakeValid = (make) => {
+    // verify that make was provided in request body
+    if (make === null || make === undefined) return false;
+
+    // verify make is of type string
+    if (typeof make !== STRING) return false;
+
+    // verify make is not all spaces
+    if (make.trim().length === 0) return false;
+
+    // verify make contains valid characters
+    if (!AIRCRAFT_MAKE_REGEX.test(make)) return false;
+
+    // make is valid
+    return true;
+}
+
+const isModelValid = (model) => {
+    // verify that model was provided in request body
+    if (model === null || model === undefined) return false;
+
+    // verify model is of type string
+    if (typeof model !== STRING) return false;
+
+    // verify model is not all spaces
+    if (model.trim().length === 0) return false;
+
+    // verify model contains valid characters
+    if (!AIRCRAFT_MAKE_REGEX.test(model)) return false;
+
+    // model is valid
+    return true;
+}
+
+const removeExtraSpacingFromString = (string) => {
+    // remove leading and trailing white space
+    string = string.trim();
+
+    // remove any spacing greater than 1 space with a single space char
+    return string.replace(INVALID_SPACING_REGEX, SPACE_CHAR);
+}
+
+// exports
+module.exports = { 
+    isMakeValid, 
+    isModelValid,
+    removeExtraSpacingFromString 
+};

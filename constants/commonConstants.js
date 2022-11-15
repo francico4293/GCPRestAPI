@@ -1,13 +1,19 @@
 'use strict';
 
-const PUBLIC = 'public';
+const STRING = 'string';
 
-const HOST = 'host';
+const AIRCRAFT_MODEL_REGEX = /^[A-Za-z\s]+$/;
 
-const LOCAL_HOST = 'localhost';
+const AIRCRAFT_MAKE_REGEX = /^[A-za-z\s0-9]+$/;
+
+const INVALID_SPACING_REGEX = /\s+/;
+
+const SPACE_CHAR = ' ';
 
 module.exports = {
-    PUBLIC,
-    HOST, 
-    LOCAL_HOST
+    STRING,
+    AIRCRAFT_MODEL_REGEX,
+    AIRCRAFT_MAKE_REGEX,
+    INVALID_SPACING_REGEX,
+    SPACE_CHAR
 };

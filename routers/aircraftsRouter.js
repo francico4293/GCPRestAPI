@@ -9,18 +9,22 @@ const {
     createSelfLink 
 } = require('../utilities/serverUtils');
 const { 
+    isMakeValid, 
+    isModelValid,
+    removeExtraSpacingFromString 
+} = require('../utilities/aircraftUtils');
+const { 
     CONTENT_TYPE, 
     APPLICATION_JSON, 
     ANY_MIME_TYPE 
 } = require('../constants/serverConstants');
-const { HOST } = require('../constants/commonConstants');
+const { HOST } = require('../constants/serverConstants');
 
 // instantiate new router object
 const router = express.Router();
 
 // TODO:
 //      Validate input - status 400 for bad or missing
-//      Create self-link functionality
 //      How to model hangar - object with id and self-link?
 router.post('/', isJwtValid, async (req, res, next) => {
     try {
@@ -43,19 +47,31 @@ router.post('/', isJwtValid, async (req, res, next) => {
                 .json({ 'Error': 'This endpoint only serves application/json' });
         }
 
+        // verify make is provided in request and is valid
+        if (!isMakeValid(req.body.make)) {
+            return res.status(400)
+                .set(CONTENT_TYPE, APPLICATION_JSON)
+                .json({ 'Error': 'Make attribute is missing or invalid' });
+        }
+
+        // sanitize make
+        req.body.make = removeExtraSpacingFromString(req.body.make);
+
+        // verify model is provided in request and is valid
+        if (!isModelValid(req.body.model)) {
+            return res.status(400)
+                .set(CONTENT_TYPE, APPLICATION_JSON)
+                .json({ 'Error': 'Model attribute is missing or invalid' });
+        }
+
+        // sanitize model
+        req.body.model = removeExtraSpacingFromString(req.body.model);
+
         // create new aircraft with attributes from request body
-        const id = await createAircraft(
-            req.body.make, 
-            req.body.model, 
-            req.body.length, req.jwt.sub
-        );
+        const id = await createAircraft(req.body.make, req.body.model, req.body.length, req.jwt.sub);
 
         // generate self link for aircraft
-        const aircraftSelfLink = createSelfLink(
-            req.protocol, 
-            req.get(HOST), 
-            req.baseUrl, id
-        );
+        const aircraftSelfLink = createSelfLink(req.protocol, req.get(HOST), req.baseUrl, id);
 
         // return aircraft object with status code 201
         res.status(201)

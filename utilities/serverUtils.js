@@ -4,7 +4,7 @@
 const { 
     HOST, 
     LOCAL_HOST 
-} = require('../constants/commonConstants');
+} = require('../constants/serverConstants');
 
 const isProd = (req) => {
     return !req.get(HOST).includes(LOCAL_HOST);
