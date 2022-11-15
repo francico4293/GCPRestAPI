@@ -2,7 +2,7 @@
 
 const APPLICATION_JSON = 'application/json';
 
-const CONTENT_TYPE = 'Content-Type';
+const CONTENT_TYPE = 'content-type';
 
 const ANY_MIME_TYPE = '*/*';
 
