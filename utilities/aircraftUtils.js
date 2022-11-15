@@ -2,9 +2,14 @@
 
 // imports
 const { 
-    STRING, 
     AIRCRAFT_MAKE_REGEX,
     AIRCRAFT_MODEL_REGEX,
+    MAX_AIRCRAFT_LENGTH,
+    MIN_AIRCRAFT_LENGTH
+} = require('../constants/aircraftConstants');
+const { 
+    STRING, 
+    NUMBER,
     INVALID_SPACING_REGEX,
     SPACE_CHAR
 } = require('../constants/commonConstants');
@@ -37,9 +42,23 @@ const isModelValid = (model) => {
     if (model.trim().length === 0) return false;
 
     // verify model contains valid characters
-    if (!AIRCRAFT_MAKE_REGEX.test(model)) return false;
+    if (!AIRCRAFT_MODEL_REGEX.test(model)) return false;
 
     // model is valid
+    return true;
+}
+
+const isLengthValid = (length) => {
+    // verify length was provided in request body
+    if (length === null || length === undefined) return false;
+
+    // verify length is of type number
+    if (typeof length !== NUMBER) return false;
+
+    // determine valid length range
+    if (length < MIN_AIRCRAFT_LENGTH || length > MAX_AIRCRAFT_LENGTH) return false;
+
+    // length is valid
     return true;
 }
 
@@ -55,5 +74,6 @@ const removeExtraSpacingFromString = (string) => {
 module.exports = { 
     isMakeValid, 
     isModelValid,
+    isLengthValid,
     removeExtraSpacingFromString 
 };

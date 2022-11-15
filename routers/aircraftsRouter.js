@@ -11,6 +11,7 @@ const {
 const { 
     isMakeValid, 
     isModelValid,
+    isLengthValid,
     removeExtraSpacingFromString 
 } = require('../utilities/aircraftUtils');
 const { 
@@ -23,9 +24,6 @@ const { HOST } = require('../constants/serverConstants');
 // instantiate new router object
 const router = express.Router();
 
-// TODO:
-//      Validate input - status 400 for bad or missing
-//      How to model hangar - object with id and self-link?
 router.post('/', isJwtValid, async (req, res, next) => {
     try {
         // if no jwt or an invalid jwt was provided return a 401 status code
@@ -66,6 +64,13 @@ router.post('/', isJwtValid, async (req, res, next) => {
 
         // sanitize model
         req.body.model = removeExtraSpacingFromString(req.body.model);
+
+        // verify length is provided in request and is valid
+        if (!isLengthValid(req.body.length)) {
+            return res.status(400)
+                .set(CONTENT_TYPE, APPLICATION_JSON)
+                .json({ 'Error': 'Length attribute is missing or invalid' });
+        }
 
         // create new aircraft with attributes from request body
         const id = await createAircraft(req.body.make, req.body.model, req.body.length, req.jwt.sub);
