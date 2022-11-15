@@ -39,6 +39,14 @@ const getAuthorizationUrl = async (isProd) => {
     });
 }
 
+const getAccessToken = async (accessCode, isProd) => {
+    const oauthClient = getOauthClient(isProd);
+
+    const { tokens } = await oauthClient.getToken(accessCode);
+
+    return tokens;
+}
+
 const getState = () => {
     return crypto.randomBytes(NUMBER_OF_RAND_BYTES).toString(HEX);
 }
@@ -46,5 +54,6 @@ const getState = () => {
 // exports
 module.exports = { 
     getOauthClient, 
-    getAuthorizationUrl 
+    getAuthorizationUrl,
+    getAccessToken
 };
