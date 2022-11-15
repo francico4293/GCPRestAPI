@@ -1,8 +1,8 @@
 'use strict';
 
-OFFLINE = 'offline';
+const OFFLINE = 'offline';
 
-USER_INFO_PROFILE_SCOPE = 'https://www.googleapis.com/auth/userinfo.profile';
+const USER_INFO_PROFILE_SCOPE = 'https://www.googleapis.com/auth/userinfo.profile';
 
 module.exports = { 
     OFFLINE, 
