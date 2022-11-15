@@ -5,7 +5,7 @@ const { google } = require('googleapis');
 const crypto = require('crypto');
 const axios = require('axios');
 const clientCredentialsJson = require('../client-credentials.json');
-const { addStateToDatastore } = require('../models/stateModel');
+const { addState } = require('../models/stateModel');
 const { 
     OFFLINE, 
     USER_INFO_PROFILE_SCOPE,
@@ -33,7 +33,7 @@ const getAuthorizationUrl = async (isProd) => {
     const state = getState();
 
     // add state value to datastore
-    await addStateToDatastore(state);
+    await addState(state);
 
     // configure and return url to redirect used to OAuth 2.0 endpoint
     return oauthClient.generateAuthUrl({

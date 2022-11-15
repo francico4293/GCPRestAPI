@@ -7,7 +7,7 @@ const { STATES } = require('../constants/datastoreConstants');
 // create new datastore client
 const datastore = new Datastore();
 
-const addStateToDatastore = async (state) => {
+const addState = async (state) => {
     // create entity key
     const key = datastore.key(STATES);
 
@@ -31,6 +31,6 @@ const fetchAllStates = async () => {
 
 // exports
 module.exports = { 
-    addStateToDatastore, 
+    addState, 
     fetchAllStates 
 };

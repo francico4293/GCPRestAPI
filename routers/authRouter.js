@@ -2,7 +2,7 @@
 
 // imports
 const express = require('express');
-const { isProd } = require('../utilities/configUtils');
+const { isProd } = require('../utilities/serverUtils');
 const { 
     getAuthorizationUrl, 
     getTokens, 
