@@ -34,6 +34,12 @@ app.get('/', (req, res) => {
     res.render(LOGIN);
 });
 
+// general error handling for internal server errors
+app.use((err, req, res, next) => {
+    console.error(err);
+    res.status(500).json({ 'Error': 'An internal server error has occurred' });
+});
+
 // set server to listen on PORT
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {

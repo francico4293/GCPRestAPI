@@ -22,15 +22,14 @@ const {
 // instantiate new router object
 const router = express.Router();
 
-router.get('/authorization-url', async (req, res) => {
+router.get('/authorization-url', async (req, res, next) => {
     try {
         // get url used to redirect end-user to Google OAuth 2.0 endpoint
         const authorizationUrl = await getAuthorizationUrl(isProd(req));
         // send url in response with status code 200
         res.status(200).send(authorizationUrl);
     } catch (err) {
-        // send status 500 if an error occurs
-        res.status(500).send();
+        next(err);
     }
 });
 
