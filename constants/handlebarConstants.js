@@ -2,12 +2,12 @@
 
 const MAIN = 'main';
 const LOGIN = 'login';
-const STATE_ERROR = 'stateError';
-const GENERAL_ERROR = 'generalError';
+const ERROR = 'error';
+const USER_INFO = 'userInfo';
 
 module.exports = { 
     MAIN, 
     LOGIN,
-    STATE_ERROR,
-    GENERAL_ERROR
+    ERROR,
+    USER_INFO
 };

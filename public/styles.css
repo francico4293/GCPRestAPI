@@ -1,0 +1,17 @@
+body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    height: 100vh;
+    padding: 50px;
+}
+
+#jwt {
+    width: 50vw;
+    overflow-wrap: break-word;
+}
+
+#error {
+    width: 50vw;
+}

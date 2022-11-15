@@ -10,6 +10,7 @@ const NUMBER_OF_RAND_BYTES = 16;
 const HEX = 'hex';
 
 const STATES = 'States';
+const USERS = 'Users';
 
 module.exports = { 
     PUBLIC, 
@@ -17,5 +18,6 @@ module.exports = {
     VIEW_ENGINE ,
     NUMBER_OF_RAND_BYTES,
     HEX,
-    STATES
+    STATES,
+    USERS
 };
