@@ -8,13 +8,16 @@ const {
     getTokens, 
     getUserInfo,
     decodeIdToken
-} = require('../utilities/utils');
+} = require('../utilities/authUtils');
 const { 
     fetchUser, 
     createUser 
 } = require('../models/userModel');
 const { isStateValid } = require('../middleware/validationMiddleware');
-const { ERROR, USER_INFO } = require('../constants/handlebarConstants');
+const { 
+    ERROR, 
+    USER_INFO 
+} = require('../constants/handlebarConstants');
 
 // instantiate new router object
 const router = express.Router();

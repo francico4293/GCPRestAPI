@@ -2,7 +2,7 @@
 
 // imports
 const { Datastore } = require('@google-cloud/datastore');
-const { STATES } = require('../constants/configConstants');
+const { STATES } = require('../constants/datastoreConstants');
 
 // create new datastore client
 const datastore = new Datastore();

@@ -8,12 +8,10 @@ const clientCredentialsJson = require('../client-credentials.json');
 const { addStateToDatastore } = require('../models/stateModel');
 const { 
     OFFLINE, 
-    USER_INFO_PROFILE_SCOPE 
-} = require('../constants/authorizationConstants');
-const { 
-    NUMBER_OF_RAND_BYTES, 
+    USER_INFO_PROFILE_SCOPE,
+    NUMBER_OF_RAND_BYTES,
     HEX 
-} = require('../constants/configConstants');
+} = require('../constants/authorizationConstants');
 
 const getOauthClient = (isProd) => {
     // determine which redirect uri to use based on production or development environment

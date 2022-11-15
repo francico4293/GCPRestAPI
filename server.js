@@ -5,14 +5,14 @@ const express = require('express');
 const { engine } = require('express-handlebars');
 const authRouter = require('./routers/authRouter');
 const { 
+    HBS, 
+    VIEW_ENGINE,
     MAIN, 
-    LOGIN 
+    LOGIN
 } = require('./constants/handlebarConstants');
 const { 
-    PUBLIC, 
-    HBS, 
-    VIEW_ENGINE
-} = require('./constants/configConstants');
+    PUBLIC,
+} = require('./constants/commonConstants');
 
 // initialize new express application
 const app = express();

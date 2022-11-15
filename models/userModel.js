@@ -2,13 +2,14 @@
 
 // imports
 const { Datastore } = require('@google-cloud/datastore');
-const { USERS } = require('../constants/configConstants'); 
+const { USERS, USER_ID } = require('../constants/datastoreConstants');
+const { EQUALS_SIGN } = require('../constants/commonConstants');
 
 // create datastore client
 const datastore = new Datastore();
 
 const fetchUser = async (userId) => {
-    const query = datastore.createQuery(USERS).filter('userId', '=', userId);
+    const query = datastore.createQuery(USERS).filter(USER_ID, EQUALS_SIGN, userId);
 
     const queryResults = await datastore.runQuery(query);
 
