@@ -55,7 +55,7 @@ router.get('/oauth', isStateValid, async (req, res) => {
             // render user info view with end-user's given name and their JSON web token
             return res.render(
                 USER_INFO, 
-                { givenName: user.givenName, jwt: tokens.id_token }
+                { givenName: user.givenName, userId: user.id, jwt: tokens.id_token }
             );
         }
 
@@ -73,7 +73,7 @@ router.get('/oauth', isStateValid, async (req, res) => {
         // render user info view with end-user's given name and their JSON web token
         res.render(
             USER_INFO, 
-            { givenName: userInfo.names[0].givenName, jwt: tokens.id_token }
+            { givenName: userInfo.names[0].givenName, userId: jwt.sub, jwt: tokens.id_token }
         );
     } catch (err) {
         // log error and render error view

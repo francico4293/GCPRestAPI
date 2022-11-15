@@ -1,6 +1,16 @@
 <h1>Hi, {{givenName}}.</h1>
-<div>
-    <h2>Here is your JSON web token:</h2>
-    <p id="jwt">{{jwt}}</p>
+<div class="row justify-content-center">
+    <table class="table">
+        <tbody>
+            <tr>
+                <th scope="row">USER ID</th>
+                <td>{{userId}}</td>
+            </tr>
+            <tr>
+                <th scope="row">JSON WEB TOKEN</th>
+                <td><p id="jwt">{{jwt}}</p></td>
+            </tr>
+        </tbody>
+    </table>
 </div>
 <button type="button" class="btn btn-primary" onclick="location.href='/'">Home</button>
