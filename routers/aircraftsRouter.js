@@ -16,7 +16,7 @@ const {
 const { 
     isMakeValid, 
     isModelValid,
-    isLengthValid,
+    isWingspanValid,
     removeExtraSpacingFromString 
 } = require('../utilities/aircraftUtils');
 const { 
@@ -34,7 +34,9 @@ router.post('/', isJwtValid, async (req, res, next) => {
     try {
         // if no jwt or an invalid jwt was provided return a 401 status code
         if (req.jwt === null) {
-            return res.status(401).send();
+            return res.status(401)
+                .set(CONTENT_TYPE, APPLICATION_JSON)
+                .json({ "Error": "Bearer token is missing or invalid" });
         }
 
         // verify content-type in request body is application/json
@@ -72,14 +74,14 @@ router.post('/', isJwtValid, async (req, res, next) => {
         req.body.model = removeExtraSpacingFromString(req.body.model);
 
         // verify length is provided in request and is valid
-        if (!isLengthValid(req.body.length)) {
+        if (!isWingspanValid(req.body.wingspan)) {
             return res.status(400)
                 .set(CONTENT_TYPE, APPLICATION_JSON)
-                .json({ 'Error': 'Length attribute is missing or invalid' });
+                .json({ 'Error': 'Wingspan attribute is missing or invalid' });
         }
 
         // create new aircraft with attributes from request body
-        const id = await createAircraft(req.body.make, req.body.model, req.body.length, req.jwt.sub);
+        const id = await createAircraft(req.body.make, req.body.model, req.body.wingspan, req.jwt.sub);
 
         // return aircraft object with status code 201
         res.status(201)
@@ -88,7 +90,7 @@ router.post('/', isJwtValid, async (req, res, next) => {
                 id, 
                 make: req.body.make, 
                 model: req.body.model, 
-                length: req.body.length, 
+                wingspan: req.body.wingspan, 
                 hangar: null,
                 ownerId: req.jwt.sub, 
                 self: createSelfLink(req.protocol, req.get(HOST), req.baseUrl, id) 
@@ -102,7 +104,9 @@ router.get('/', isJwtValid, async (req, res, next) => {
     try {
         // if no jwt or an invalid jwt was provided return a 401 status code
         if (req.jwt === null) {
-            return res.status(401).send();
+            return res.status(401)
+                .set(CONTENT_TYPE, APPLICATION_JSON)
+                .json({ "Error": "Bearer token is missing or invalid" });
         }
 
         // verify accept header is */* or application/json
@@ -124,7 +128,8 @@ router.get('/', isJwtValid, async (req, res, next) => {
                 id: parseInt(result[Datastore.KEY].id),
                 make: result.make,
                 model: result.model,
-                length: result.length,
+                wingspan: result.wingspan,
+                hangar: result.hangar,
                 ownerId: result.ownerId,
                 self: createSelfLink(req.protocol, req.get(HOST), req.baseUrl, result[Datastore.KEY].id)
             });
@@ -148,7 +153,9 @@ router.get('/:aircraftId', isJwtValid, async (req, res) => {
     try {
         // if no jwt or an invalid jwt was provided return a 401 status code
         if (req.jwt === null) {
-            return res.status(401).send();
+            return res.status(401)
+                .set(CONTENT_TYPE, APPLICATION_JSON)
+                .json({ "Error": "Bearer token is missing or invalid" });
         }
 
         // verify accept header is */* or application/json
@@ -172,7 +179,7 @@ router.get('/:aircraftId', isJwtValid, async (req, res) => {
         if (aircraft.ownerId !== req.jwt.sub) {
             return res.status(403)
                 .set(CONTENT_TYPE, APPLICATION_JSON)
-                .json({ 'Error': 'You are not authorized to view this aircraft' });
+                .json({ 'Error': 'You are not authorized to perform this action' });
         }
 
         // add a self link to the aircraft object

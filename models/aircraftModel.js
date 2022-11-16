@@ -10,10 +10,10 @@ const { RESULT_LIMIT } = require('../constants/datastoreConstants');
 // create datastore client
 const datastore = new Datastore();
 
-const createAircraft = async (make, model, length, ownerId) => {
+const createAircraft = async (make, model, wingspan, ownerId) => {
     const key = datastore.key(AIRCRAFTS);
 
-    const entity = { key, data: { make, model, length, hangar: null, ownerId } };
+    const entity = { key, data: { make, model, wingspan, hangar: null, ownerId } };
 
     await datastore.save(entity);
 
@@ -45,7 +45,8 @@ const fetchAircraftById = async (aircraftId) => {
         id: parseInt(entity[0][Datastore.KEY].id),
         make: entity[0].make,
         model: entity[0].model,
-        length: entity[0].length,
+        wingspan: entity[0].wingspan,
+        hangar: entity[0].hangar,
         ownerId: entity[0].ownerId
     };
 }
