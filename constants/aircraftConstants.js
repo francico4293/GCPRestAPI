@@ -8,9 +8,12 @@ const AIRCRAFT_MAKE_REGEX = /^[A-Za-z\s]+$/;
 
 const AIRCRAFT_MODEL_REGEX = /^[A-za-z\s0-9]+$/;
 
+const OWNER_ID = "ownerId";
+
 module.exports = { 
     MIN_AIRCRAFT_LENGTH,
     MAX_AIRCRAFT_LENGTH, 
     AIRCRAFT_MAKE_REGEX, 
-    AIRCRAFT_MODEL_REGEX 
+    AIRCRAFT_MODEL_REGEX,
+    OWNER_ID
 };

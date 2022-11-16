@@ -3,7 +3,10 @@
 // imports
 const express = require('express');
 const { isJwtValid } = require('../middleware/authMiddleware');
-const { createAircraft } = require('../models/aircraftModel');
+const { 
+    createAircraft, 
+    fetchAllBoatsForOwner 
+} = require('../models/aircraftModel');
 const { 
     isReqHeaderValid, 
     createSelfLink 
@@ -90,6 +93,37 @@ router.post('/', isJwtValid, async (req, res, next) => {
                 ownerId: req.jwt.sub, 
                 self: aircraftSelfLink 
             });
+    } catch (err) {
+        next(err);
+    }
+});
+
+router.get('/', isJwtValid, async (req, res, next) => {
+    try {
+        // if no jwt or an invalid jwt was provided return a 401 status code
+        if (req.jwt === null) {
+            return res.status(401).send();
+        }
+
+        // verify accept header is */* or application/json
+        if (!isReqHeaderValid(req.headers.accept, APPLICATION_JSON, ANY_MIME_TYPE)) {
+            return res.status(406)
+                .set(CONTENT_TYPE, APPLICATION_JSON)
+                .json({ 'Error': 'This endpoint only serves application/json' });
+        }
+
+        // fetch all aircrafts for jwt sub from datastore
+        const aircrafts = await fetchAllBoatsForOwner(req.jwt.sub);
+
+        // generate self links for each aircraft
+        aircrafts.forEach(aircraft => { 
+            aircraft.self = createSelfLink(req.protocol, req.get(HOST), req.baseUrl, aircraft.id);
+        });
+        
+        // return status 200 and all aircrafts for owner
+        res.status(200)
+            .set(CONTENT_TYPE, APPLICATION_JSON)
+            .json(aircrafts);
     } catch (err) {
         next(err);
     }
