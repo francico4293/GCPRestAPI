@@ -5,6 +5,7 @@ const { Datastore } = require('@google-cloud/datastore');
 const { AIRCRAFTS } = require('../constants/datastoreConstants');
 const { OWNER_ID } = require('../constants/aircraftConstants');
 const { EQUALS_SIGN } = require('../constants/commonConstants');
+const { RESULT_LIMIT } = require('../constants/datastoreConstants');
 
 // create datastore client
 const datastore = new Datastore();
@@ -19,24 +20,20 @@ const createAircraft = async (make, model, length, ownerId) => {
     return parseInt(key.id);
 }
 
-const fetchAllBoatsForOwner = async (ownerId) => {
-    const query = datastore.createQuery(AIRCRAFTS).filter(OWNER_ID, EQUALS_SIGN, ownerId);
+const getAircraftQueryResultsForOwner = async (ownerId, cursor) => {
+    let query = datastore.createQuery(AIRCRAFTS)
+        .filter(OWNER_ID, EQUALS_SIGN, ownerId)
+        .limit(RESULT_LIMIT);
 
-    const queryResults = await datastore.runQuery(query);
+    if (cursor !== undefined && cursor !== null) {
+        query = query.start(cursor);
+    }
 
-    return queryResults[0].map(queryResult => (
-        {
-            id: parseInt(queryResult[Datastore.KEY].id),
-            make: queryResult.make,
-            model: queryResult.model,
-            length: queryResult.length,
-            ownerId: queryResult.ownerId
-        }
-    ));
+    return await datastore.runQuery(query);
 }
 
 // exports
 module.exports = { 
     createAircraft, 
-    fetchAllBoatsForOwner 
+    getAircraftQueryResultsForOwner 
 };

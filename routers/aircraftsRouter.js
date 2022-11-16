@@ -2,10 +2,11 @@
 
 // imports
 const express = require('express');
+const { Datastore } = require('@google-cloud/datastore');
 const { isJwtValid } = require('../middleware/authMiddleware');
 const { 
     createAircraft, 
-    fetchAllBoatsForOwner 
+    getAircraftQueryResultsForOwner 
 } = require('../models/aircraftModel');
 const { 
     isReqHeaderValid, 
@@ -22,6 +23,7 @@ const {
     APPLICATION_JSON, 
     ANY_MIME_TYPE 
 } = require('../constants/serverConstants');
+const { MORE_RESULTS_AFTER_LIMIT } = require('../constants/datastoreConstants');
 const { HOST } = require('../constants/serverConstants');
 
 // instantiate new router object
@@ -78,9 +80,6 @@ router.post('/', isJwtValid, async (req, res, next) => {
         // create new aircraft with attributes from request body
         const id = await createAircraft(req.body.make, req.body.model, req.body.length, req.jwt.sub);
 
-        // generate self link for aircraft
-        const aircraftSelfLink = createSelfLink(req.protocol, req.get(HOST), req.baseUrl, id);
-
         // return aircraft object with status code 201
         res.status(201)
             .set(CONTENT_TYPE, APPLICATION_JSON)
@@ -91,7 +90,7 @@ router.post('/', isJwtValid, async (req, res, next) => {
                 length: req.body.length, 
                 hangar: null,
                 ownerId: req.jwt.sub, 
-                self: aircraftSelfLink 
+                self: createSelfLink(req.protocol, req.get(HOST), req.baseUrl, id) 
             });
     } catch (err) {
         next(err);
@@ -113,17 +112,32 @@ router.get('/', isJwtValid, async (req, res, next) => {
         }
 
         // fetch all aircrafts for jwt sub from datastore
-        const aircrafts = await fetchAllBoatsForOwner(req.jwt.sub);
+        const queryResults = await getAircraftQueryResultsForOwner(req.jwt.sub, req.query.cursor);
 
-        // generate self links for each aircraft
-        aircrafts.forEach(aircraft => { 
-            aircraft.self = createSelfLink(req.protocol, req.get(HOST), req.baseUrl, aircraft.id);
+        // initialize object to send in response body
+        const responseJson = { aircrafts: [] };
+
+        // populate aircrafts array in responseJson object with query results
+        queryResults[0].forEach(result => {
+            responseJson.aircrafts.push({
+                id: parseInt(result[Datastore.KEY].id),
+                make: result.make,
+                model: result.model,
+                length: result.length,
+                ownerId: result.ownerId,
+                self: createSelfLink(req.protocol, req.get(HOST), req.baseUrl, result[Datastore.KEY].id)
+            });
         });
         
-        // return status 200 and all aircrafts for owner
+        // if more results remain in datastore, add cursor in responseJson object 
+        if (queryResults[1].moreResults === MORE_RESULTS_AFTER_LIMIT) {
+            responseJson.next = `${req.protocol}://${req.get(HOST)}${req.baseUrl}?cursor=${encodeURIComponent(queryResults[1].endCursor)}`;
+        }
+
+        // return responseJson with status 200
         res.status(200)
             .set(CONTENT_TYPE, APPLICATION_JSON)
-            .json(aircrafts);
+            .json(responseJson);
     } catch (err) {
         next(err);
     }
