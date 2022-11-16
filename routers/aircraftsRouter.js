@@ -6,7 +6,8 @@ const { Datastore } = require('@google-cloud/datastore');
 const { isJwtValid } = require('../middleware/authMiddleware');
 const { 
     createAircraft, 
-    getAircraftQueryResultsForOwner 
+    getQueryResultsForAircraftsByOwner,
+    fetchAircraftById
 } = require('../models/aircraftModel');
 const { 
     isReqHeaderValid, 
@@ -112,7 +113,7 @@ router.get('/', isJwtValid, async (req, res, next) => {
         }
 
         // fetch all aircrafts for jwt sub from datastore
-        const queryResults = await getAircraftQueryResultsForOwner(req.jwt.sub, req.query.cursor);
+        const queryResults = await getQueryResultsForAircraftsByOwner(req.jwt.sub, req.query.cursor);
 
         // initialize object to send in response body
         const responseJson = { aircrafts: [] };
@@ -138,6 +139,49 @@ router.get('/', isJwtValid, async (req, res, next) => {
         res.status(200)
             .set(CONTENT_TYPE, APPLICATION_JSON)
             .json(responseJson);
+    } catch (err) {
+        next(err);
+    }
+});
+
+router.get('/:aircraftId', isJwtValid, async (req, res) => {
+    try {
+        // if no jwt or an invalid jwt was provided return a 401 status code
+        if (req.jwt === null) {
+            return res.status(401).send();
+        }
+
+        // verify accept header is */* or application/json
+        if (!isReqHeaderValid(req.headers.accept, APPLICATION_JSON, ANY_MIME_TYPE)) {
+            return res.status(406)
+                .set(CONTENT_TYPE, APPLICATION_JSON)
+                .json({ 'Error': 'This endpoint only serves application/json' });
+        }
+
+        // fetch the aircraft that has the specified aircraftId
+        const aircraft = await fetchAircraftById(req.params.aircraftId);
+
+        // if aircraft is null then no aircraft with aircraftId exists
+        if (aircraft === null) {
+            return res.status(404)
+                .set(CONTENT_TYPE, APPLICATION_JSON)
+                .json({ 'Error': 'No aircraft with this aircraftId exists' });
+        }
+
+        // verify the requester is owns the aircraft
+        if (aircraft.ownerId !== req.jwt.sub) {
+            return res.status(403)
+                .set(CONTENT_TYPE, APPLICATION_JSON)
+                .json({ 'Error': 'You are not authorized to view this aircraft' });
+        }
+
+        // add a self link to the aircraft object
+        aircraft.self = createSelfLink(req.protocol, req.get(HOST), req.baseUrl, req.params.aircraftId);
+
+        // return aircraft object with status 200
+        res.status(200)
+            .set(CONTENT_TYPE, APPLICATION_JSON)
+            .json(aircraft);
     } catch (err) {
         next(err);
     }

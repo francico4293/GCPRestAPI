@@ -20,7 +20,7 @@ const createAircraft = async (make, model, length, ownerId) => {
     return parseInt(key.id);
 }
 
-const getAircraftQueryResultsForOwner = async (ownerId, cursor) => {
+const getQueryResultsForAircraftsByOwner = async (ownerId, cursor) => {
     let query = datastore.createQuery(AIRCRAFTS)
         .filter(OWNER_ID, EQUALS_SIGN, ownerId)
         .limit(RESULT_LIMIT);
@@ -32,8 +32,27 @@ const getAircraftQueryResultsForOwner = async (ownerId, cursor) => {
     return await datastore.runQuery(query);
 }
 
+const fetchAircraftById = async (aircraftId) => {
+    const key = datastore.key([AIRCRAFTS, datastore.int(aircraftId)]);
+
+    const entity = await datastore.get(key);
+
+    if (entity[0] === null || entity[0] === undefined) {
+        return null;
+    }
+
+    return {
+        id: parseInt(entity[0][Datastore.KEY].id),
+        make: entity[0].make,
+        model: entity[0].model,
+        length: entity[0].length,
+        ownerId: entity[0].ownerId
+    };
+}
+
 // exports
 module.exports = { 
     createAircraft, 
-    getAircraftQueryResultsForOwner 
+    getQueryResultsForAircraftsByOwner,
+    fetchAircraftById
 };
