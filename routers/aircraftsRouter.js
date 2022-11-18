@@ -164,7 +164,8 @@ router.get('/', isJwtValid, async (req, res, next) => {
         
         // if more results remain in datastore, add cursor in responseJson object 
         if (queryResults[1].moreResults === MORE_RESULTS_AFTER_LIMIT) {
-            responseJson.next = `${req.protocol}://${req.get(HOST)}${req.baseUrl}?cursor=${encodeURIComponent(queryResults[1].endCursor)}`;
+            responseJson.next = `${req.protocol}://${req.get(HOST)}${req.baseUrl}?` + 
+                `cursor=${encodeURIComponent(queryResults[1].endCursor)}`;
         }
 
         // return responseJson with status 200
