@@ -10,7 +10,7 @@ const datastore = new Datastore();
 const createHangar = async (name, location, capacity) => {
     const key = datastore.key(HANGARS);
 
-    const entity = { key, data: { name, location, capacity, planges: [] } };
+    const entity = { key, data: { name, location, capacity, aircrafts: [] } };
 
     await datastore.save(entity);
 
