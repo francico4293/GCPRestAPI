@@ -125,7 +125,8 @@ router.get('/', async (req, res, next) => {
 
         // add cursor as "next" parameter if more result remain
         if (queryResults[1].moreResults === MORE_RESULTS_AFTER_LIMIT) {
-            responseJson.next = `${req.protocol}://${req.get(HOST)}${req.baseUrl}?cursor=${encodeURIComponent(queryResults[1].endCursor)}`;
+            responseJson.next = `${req.protocol}://${req.get(HOST)}${req.baseUrl}?` + 
+                `cursor=${encodeURIComponent(queryResults[1].endCursor)}`;
         }
 
         // return object with hangars array and possible next attribute with status 200
