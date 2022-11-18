@@ -176,7 +176,7 @@ router.get('/:aircraftId', isJwtValid, async (req, res) => {
                 .json({ 'Error': 'No aircraft with this aircraftId exists' });
         }
 
-        // verify the requester is owns the aircraft
+        // verify the requester owns the aircraft
         if (aircraft.ownerId !== req.jwt.sub) {
             return res.status(403)
                 .set(CONTENT_TYPE, APPLICATION_JSON)
@@ -195,6 +195,7 @@ router.get('/:aircraftId', isJwtValid, async (req, res) => {
     }
 });
 
+// TODO: Add logic to remove deleted aircraft from a hangar
 router.delete('/:aircraftId', isJwtValid, async (req, res) => {
     try {
         // if no jwt or an invalid jwt was provided return a 401 status code
@@ -214,7 +215,7 @@ router.delete('/:aircraftId', isJwtValid, async (req, res) => {
                 .json({ 'Error': 'No aircraft with this aircraftId exists' });
         }
 
-        // verify the requester is owns the aircraft
+        // verify the requester owns the aircraft
         if (aircraft.ownerId !== req.jwt.sub) {
             return res.status(403)
                 .set(CONTENT_TYPE, APPLICATION_JSON)
