@@ -9,7 +9,8 @@ const {
 } = require('../constants/commonConstants');
 const { 
     MIN_CAPACITY,
-    MAX_CAPACITY 
+    MAX_CAPACITY,
+    HANGAR_NAME_LOCATION_REGEX
 } = require('../constants/hangarConstants');
 
 // TODO: Add regex validation for name and location
@@ -23,6 +24,9 @@ const isNameValid = (name) => {
 
     if (name.trim().length === 0) return false;
 
+    // verify name contains valid characters
+    if (!HANGAR_NAME_LOCATION_REGEX.test(name)) return false;
+
     return true;
 }
 
@@ -34,6 +38,9 @@ const isLocationValid = (location) => {
     if (location.length < MIN_STRING_LENGTH || location.length > MAX_STRING_LENGTH) return false;
 
     if (location.trim().length === 0) return false;
+
+    // verify make contains valid characters
+    if (!HANGAR_NAME_LOCATION_REGEX.test(location)) return false;
 
     return true;
 }

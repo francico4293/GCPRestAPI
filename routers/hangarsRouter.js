@@ -38,26 +38,31 @@ router.post('/', async (req, res, next) => {
                 .json({ 'Error': 'This endpoint only serves application/json' });
         }
 
+        // verify that name attribute is valid
         if (!isNameValid(req.body.name)) {
             return res.status(400)
                 .set(CONTENT_TYPE, APPLICATION_JSON)
                 .json({ "Error": "Name attribute is missing or invalid" });
         }
 
+        // verify that location attribute is valid
         if (!isLocationValid(req.body.location)) {
             return res.status(400)
                 .set(CONTENT_TYPE, APPLICATION_JSON)
                 .json({ "Error": "Location attribute is missing or invalid" });
         }
 
+        // verify that capacity attribute is valid
         if (!isCapacityValid(req.body.capacity)) {
             return res.status(400)
                 .set(CONTENT_TYPE, APPLICATION_JSON)
                 .json({ "Error": "Capacity attribute is missing or invalid" });
         }
 
+        // create a new hangar using specified attribute values
         const id = await createHangar(req.body.name, req.body.location, req.body.capacity);
 
+        // return status 201 and newly created hangar object
         res.status(201)
             .set(CONTENT_TYPE, APPLICATION_JSON)
             .json(
