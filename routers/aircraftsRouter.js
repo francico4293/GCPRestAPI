@@ -27,6 +27,17 @@ const {
 } = require('../constants/serverConstants');
 const { MORE_RESULTS_AFTER_LIMIT } = require('../constants/datastoreConstants');
 const { HOST } = require('../constants/serverConstants');
+const {
+    HTTP_415_UNSUPPORTED_MEDIA_TYPE,
+    HTTP_406_NOT_ACCEPTABLE,
+    HTTP_400_BAD_REQUEST,
+    HTTP_201_CREATED,
+    HTTP_200_OK,
+    HTTP_401_UNAUTHORIZED,
+    HTTP_404_NOT_FOUND,
+    HTTP_403_FORBIDDEN,
+    HTTP_204_NO_CONTENT
+} = require('../constants/statusCodes');
 
 // instantiate new router object
 const router = express.Router();
@@ -40,28 +51,28 @@ router.post('/', isJwtValid, async (req, res, next) => {
     try {
         // if no jwt or an invalid jwt was provided return a 401 status code
         if (req.jwt === null) {
-            return res.status(401)
+            return res.status(HTTP_401_UNAUTHORIZED)
                 .set(CONTENT_TYPE, APPLICATION_JSON)
                 .json({ "Error": "Bearer token is missing or invalid" });
         }
 
         // verify content-type in request body is application/json
         if (!isReqHeaderValid(req.headers[CONTENT_TYPE], APPLICATION_JSON)) {
-            return res.status(415)
+            return res.status(HTTP_415_UNSUPPORTED_MEDIA_TYPE)
                 .set(CONTENT_TYPE, APPLICATION_JSON)
                 .json({ 'Error': 'This endpoint only accepts application/json' });
         }
 
         // verify accept header is */* or application/json
         if (!isReqHeaderValid(req.headers.accept, APPLICATION_JSON, ANY_MIME_TYPE)) {
-            return res.status(406)
+            return res.status(HTTP_406_NOT_ACCEPTABLE)
                 .set(CONTENT_TYPE, APPLICATION_JSON)
                 .json({ 'Error': 'This endpoint only serves application/json' });
         }
 
         // verify make is provided in request and is valid
         if (!isMakeValid(req.body.make)) {
-            return res.status(400)
+            return res.status(HTTP_400_BAD_REQUEST)
                 .set(CONTENT_TYPE, APPLICATION_JSON)
                 .json({ 'Error': 'Make attribute is missing or invalid' });
         }
@@ -71,7 +82,7 @@ router.post('/', isJwtValid, async (req, res, next) => {
 
         // verify model is provided in request and is valid
         if (!isModelValid(req.body.model)) {
-            return res.status(400)
+            return res.status(HTTP_400_BAD_REQUEST)
                 .set(CONTENT_TYPE, APPLICATION_JSON)
                 .json({ 'Error': 'Model attribute is missing or invalid' });
         }
@@ -81,7 +92,7 @@ router.post('/', isJwtValid, async (req, res, next) => {
 
         // verify length is provided in request and is valid
         if (!isWingspanValid(req.body.wingspan)) {
-            return res.status(400)
+            return res.status(HTTP_400_BAD_REQUEST)
                 .set(CONTENT_TYPE, APPLICATION_JSON)
                 .json({ 'Error': 'Wingspan attribute is missing or invalid' });
         }
@@ -90,7 +101,7 @@ router.post('/', isJwtValid, async (req, res, next) => {
         const id = await createAircraft(req.body.make, req.body.model, req.body.wingspan, req.jwt.sub);
 
         // return aircraft object with status code 201
-        res.status(201)
+        res.status(HTTP_201_CREATED)
             .set(CONTENT_TYPE, APPLICATION_JSON)
             .json(
                 { 
@@ -118,14 +129,14 @@ router.get('/', isJwtValid, async (req, res, next) => {
     try {
         // if no jwt or an invalid jwt was provided return a 401 status code
         if (req.jwt === null) {
-            return res.status(401)
+            return res.status(HTTP_401_UNAUTHORIZED)
                 .set(CONTENT_TYPE, APPLICATION_JSON)
                 .json({ "Error": "Bearer token is missing or invalid" });
         }
 
         // verify accept header is */* or application/json
         if (!isReqHeaderValid(req.headers.accept, APPLICATION_JSON, ANY_MIME_TYPE)) {
-            return res.status(406)
+            return res.status(HTTP_406_NOT_ACCEPTABLE)
                 .set(CONTENT_TYPE, APPLICATION_JSON)
                 .json({ 'Error': 'This endpoint only serves application/json' });
         }
@@ -157,7 +168,7 @@ router.get('/', isJwtValid, async (req, res, next) => {
         }
 
         // return responseJson with status 200
-        res.status(200)
+        res.status(HTTP_200_OK)
             .set(CONTENT_TYPE, APPLICATION_JSON)
             .json(responseJson);
     } catch (err) {
@@ -173,14 +184,14 @@ router.get('/:aircraftId', isJwtValid, async (req, res) => {
     try {
         // if no jwt or an invalid jwt was provided return a 401 status code
         if (req.jwt === null) {
-            return res.status(401)
+            return res.status(HTTP_401_UNAUTHORIZED)
                 .set(CONTENT_TYPE, APPLICATION_JSON)
                 .json({ "Error": "Bearer token is missing or invalid" });
         }
 
         // verify accept header is */* or application/json
         if (!isReqHeaderValid(req.headers.accept, APPLICATION_JSON, ANY_MIME_TYPE)) {
-            return res.status(406)
+            return res.status(HTTP_406_NOT_ACCEPTABLE)
                 .set(CONTENT_TYPE, APPLICATION_JSON)
                 .json({ 'Error': 'This endpoint only serves application/json' });
         }
@@ -190,14 +201,14 @@ router.get('/:aircraftId', isJwtValid, async (req, res) => {
 
         // if aircraft is null then no aircraft with aircraftId exists
         if (aircraft === null) {
-            return res.status(404)
+            return res.status(HTTP_404_NOT_FOUND)
                 .set(CONTENT_TYPE, APPLICATION_JSON)
                 .json({ 'Error': 'No aircraft with this aircraftId exists' });
         }
 
         // verify the requester owns the aircraft
         if (aircraft.ownerId !== req.jwt.sub) {
-            return res.status(403)
+            return res.status(HTTP_403_FORBIDDEN)
                 .set(CONTENT_TYPE, APPLICATION_JSON)
                 .json({ 'Error': 'You are not authorized to perform this action' });
         }
@@ -206,7 +217,7 @@ router.get('/:aircraftId', isJwtValid, async (req, res) => {
         aircraft.self = createSelfLink(req.protocol, req.get(HOST), req.baseUrl, req.params.aircraftId);
 
         // return aircraft object with status 200
-        res.status(200)
+        res.status(HTTP_200_OK)
             .set(CONTENT_TYPE, APPLICATION_JSON)
             .json(aircraft);
     } catch (err) {
@@ -223,7 +234,7 @@ router.delete('/:aircraftId', isJwtValid, async (req, res) => {
     try {
         // if no jwt or an invalid jwt was provided return a 401 status code
         if (req.jwt === null) {
-            return res.status(401)
+            return res.status(HTTP_401_UNAUTHORIZED)
                 .set(CONTENT_TYPE, APPLICATION_JSON)
                 .json({ "Error": "Bearer token is missing or invalid" });
         }
@@ -233,14 +244,14 @@ router.delete('/:aircraftId', isJwtValid, async (req, res) => {
 
         // if aircraft is null then no aircraft with aircraftId exists
         if (aircraft === null) {
-            return res.status(404)
+            return res.status(HTTP_404_NOT_FOUND)
                 .set(CONTENT_TYPE, APPLICATION_JSON)
                 .json({ 'Error': 'No aircraft with this aircraftId exists' });
         }
 
         // verify the requester owns the aircraft
         if (aircraft.ownerId !== req.jwt.sub) {
-            return res.status(403)
+            return res.status(HTTP_403_FORBIDDEN)
                 .set(CONTENT_TYPE, APPLICATION_JSON)
                 .json({ 'Error': 'You are not authorized to perform this action' });
         }
@@ -249,7 +260,7 @@ router.delete('/:aircraftId', isJwtValid, async (req, res) => {
         await deleteAircraftById(req.params.aircraftId);
 
         // return status 204
-        res.status(204).send();
+        res.status(HTTP_204_NO_CONTENT).send();
     } catch (err) {
         next(err);
     }

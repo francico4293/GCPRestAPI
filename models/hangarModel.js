@@ -30,8 +30,27 @@ const getQueryResultsForHangars = async (cursor) => {
     return await datastore.runQuery(query);
 }
 
+const fetchHangarById = async (hangarId) => {
+    const key = datastore.key([HANGARS, datastore.int(hangarId)]);
+
+    const entity = await datastore.get(key);
+
+    if (entity[0] === null || entity[0] === undefined) {
+        return null;
+    }
+
+    return {
+        id: parseInt(entity[0][Datastore.KEY].id),
+        name: entity[0].name,
+        location: entity[0].location,
+        capacity: entity[0].capacity,
+        aircrafts: entity[0].aircrafts
+    };
+}
+
 // exports
 module.exports = { 
     createHangar, 
-    getQueryResultsForHangars 
+    getQueryResultsForHangars,
+    fetchHangarById
 };

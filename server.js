@@ -15,7 +15,9 @@ const {
 } = require('./constants/handlebarConstants');
 const { 
     PUBLIC,
+    TRUST_PROXY
 } = require('./constants/serverConstants');
+const { HTTP_500_INTERNAL_SERVER_ERROR } = require('./constants/statusCodes');
 
 // initialize new express application
 const app = express();
@@ -25,7 +27,7 @@ app.engine(HBS, engine({ defaultLayout: MAIN, extname: HBS }));
 app.set(VIEW_ENGINE, HBS);
 
 // app setup
-app.enable('trust proxy');
+app.enable(TRUST_PROXY);
 app.use(express.json());
 app.use(express.static(__dirname + '/' + PUBLIC));
 
@@ -42,7 +44,8 @@ app.get('/', (req, res) => {
 // general error handling for internal server errors
 app.use((err, req, res, next) => {
     console.error(err);
-    res.status(500).json({ 'Error': 'An internal server error has occurred' });
+    res.status(HTTP_500_INTERNAL_SERVER_ERROR)
+        .json({ 'Error': 'An internal server error has occurred' });
 });
 
 // set server to listen on PORT
