@@ -51,9 +51,16 @@ const fetchAircraftById = async (aircraftId) => {
     };
 }
 
+const deleteAircraftById = async (aircraftId) => {
+    const key = datastore.key([AIRCRAFTS, datastore.int(aircraftId)]);
+
+    return await datastore.delete(key);
+}
+
 // exports
 module.exports = { 
     createAircraft, 
     getQueryResultsForAircraftsByOwner,
-    fetchAircraftById
+    fetchAircraftById,
+    deleteAircraftById
 };

@@ -7,7 +7,8 @@ const { isJwtValid } = require('../middleware/authMiddleware');
 const { 
     createAircraft, 
     getQueryResultsForAircraftsByOwner,
-    fetchAircraftById
+    fetchAircraftById,
+    deleteAircraftById
 } = require('../models/aircraftModel');
 const { 
     isReqHeaderValid, 
@@ -192,6 +193,46 @@ router.get('/:aircraftId', isJwtValid, async (req, res) => {
     } catch (err) {
         next(err);
     }
+});
+
+router.delete('/:aircraftId', isJwtValid, async (req, res) => {
+    try {
+        // if no jwt or an invalid jwt was provided return a 401 status code
+        if (req.jwt === null) {
+            return res.status(401)
+                .set(CONTENT_TYPE, APPLICATION_JSON)
+                .json({ "Error": "Bearer token is missing or invalid" });
+        }
+
+        // fetch the aircraft that has the specified aircraftId
+        const aircraft = await fetchAircraftById(req.params.aircraftId);
+
+        // if aircraft is null then no aircraft with aircraftId exists
+        if (aircraft === null) {
+            return res.status(404)
+                .set(CONTENT_TYPE, APPLICATION_JSON)
+                .json({ 'Error': 'No aircraft with this aircraftId exists' });
+        }
+
+        // verify the requester is owns the aircraft
+        if (aircraft.ownerId !== req.jwt.sub) {
+            return res.status(403)
+                .set(CONTENT_TYPE, APPLICATION_JSON)
+                .json({ 'Error': 'You are not authorized to perform this action' });
+        }
+
+        // delete the aircrafy with aircraftId
+        await deleteAircraftById(req.params.aircraftId);
+
+        // return status 204
+        res.status(204).send();
+    } catch (err) {
+        next(err);
+    }
+});
+
+router.delete('/', async (req, res) => {
+    // invalid action
 });
 
 // exports
