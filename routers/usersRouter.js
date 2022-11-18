@@ -13,6 +13,10 @@ const {
 // instantiate new router object
 const router = express.Router();
 
+/**
+ * Handler for GET /users endpoint. This endpoint is used to fetch all users currently signed up
+ * for the application.
+ */
 router.get('/', async (req, res, next) => {
     try {
         // accept header must be */* or application/json

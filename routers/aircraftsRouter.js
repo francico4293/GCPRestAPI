@@ -31,6 +31,11 @@ const { HOST } = require('../constants/serverConstants');
 // instantiate new router object
 const router = express.Router();
 
+/**
+ * Handler for POST /aircrafts/:aircraftId endpoint. This endpoint allows a user to create a new
+ * aircraft by providing a valid JSON web token as a Bearer Token and specifying the make, model,
+ * and wingspan of the aircraft to be created.
+ */
 router.post('/', isJwtValid, async (req, res, next) => {
     try {
         // if no jwt or an invalid jwt was provided return a 401 status code
@@ -101,6 +106,12 @@ router.post('/', isJwtValid, async (req, res, next) => {
     }
 });
 
+/**
+ * Handler for GET /aircrafts endpoint. This endpoint allows a user to view all aircrafts that they own.
+ * The response will only return 5 aircrafts at a time. Should the user own more than 5 aircrafts, a next
+ * attribute will be included in the response body which is a cursor used for pagination allowing the user
+ * to get more aircrafts that they own.
+ */
 router.get('/', isJwtValid, async (req, res, next) => {
     try {
         // if no jwt or an invalid jwt was provided return a 401 status code
@@ -150,6 +161,10 @@ router.get('/', isJwtValid, async (req, res, next) => {
     }
 });
 
+/**
+ * Handler for GET /aircrafts/:aircraftId endpoint. This endpoint allows a user to get an aircraft that they
+ * own using the aircraft's unique aircraftId as a request parameter.
+ */
 router.get('/:aircraftId', isJwtValid, async (req, res) => {
     try {
         // if no jwt or an invalid jwt was provided return a 401 status code
@@ -196,6 +211,10 @@ router.get('/:aircraftId', isJwtValid, async (req, res) => {
 });
 
 // TODO: Add logic to remove deleted aircraft from a hangar
+/**
+ * Handler for DELETE /aircrafts/:aircraftId endpoint. This endpoint allows a user to delete an
+ * aircraft they own by specifying the aircraft's unique aircraftId as a request parameter.
+ */
 router.delete('/:aircraftId', isJwtValid, async (req, res) => {
     try {
         // if no jwt or an invalid jwt was provided return a 401 status code

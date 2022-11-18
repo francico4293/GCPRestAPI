@@ -7,6 +7,11 @@ const { STATES } = require('../constants/datastoreConstants');
 // create new datastore client
 const datastore = new Datastore();
 
+/**
+ * Saves the specified state value to the Datastore States kind.
+ * @param {string} state - A random secret phrase used to help prevent XSRF attacks. 
+ * @returns - The result of saving the state to the Datastore States kind.
+ */
 const addState = async (state) => {
     // create entity key
     const key = datastore.key(STATES);
@@ -18,6 +23,10 @@ const addState = async (state) => {
     return await datastore.save(entity);
 }
 
+/**
+ * Fetches all state values from the Datastore States kind.
+ * @returns - An array containing the state values retrieved from the Datastore States kind.
+ */
 const fetchAllStates = async () => {
     // create query to extract all entities from States kind
     const query = datastore.createQuery(STATES);

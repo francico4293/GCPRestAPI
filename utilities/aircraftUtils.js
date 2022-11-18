@@ -14,6 +14,11 @@ const {
     SPACE_CHAR
 } = require('../constants/commonConstants');
 
+/**
+ * Validates that the aircraft make value is valid.
+ * @param {string} make - The make of the aircraft. 
+ * @returns - True if the make value is valid. Otherwise, false.
+ */
 const isMakeValid = (make) => {
     // verify that make was provided in request body
     if (make === null || make === undefined) return false;
@@ -34,6 +39,11 @@ const isMakeValid = (make) => {
     return true;
 }
 
+/**
+ * Validates that the aircraft model value is valid.
+ * @param {string} model - The model of the aircraft.
+ * @returns - True if the model value is valid. Otherwise, false.
+ */
 const isModelValid = (model) => {
     // verify that model was provided in request body
     if (model === null || model === undefined) return false;
@@ -54,20 +64,32 @@ const isModelValid = (model) => {
     return true;
 }
 
-const isWingspanValid = (length) => {
+/**
+ * Validates that the aircraft wingspan value is valid.
+ * @param {number} wingspan - The wingspan of the aircraft. 
+ * @returns - True if the wingspan value is valid. Otherwise, false.
+ */
+const isWingspanValid = (wingspan) => {
     // verify length was provided in request body
-    if (length === null || length === undefined) return false;
+    if (wingspan === null || wingspan === undefined) return false;
 
     // verify length is of type number
-    if (typeof length !== NUMBER) return false;
+    if (typeof wingspan !== NUMBER) return false;
 
     // determine valid length range
-    if (length < MIN_AIRCRAFT_WINGSPAN || length > MAX_AIRCRAFT_WINGSPAN) return false;
+    if (wingspan < MIN_AIRCRAFT_WINGSPAN || wingspan > MAX_AIRCRAFT_WINGSPAN) return false;
 
     // length is valid
     return true;
 }
 
+/**
+ * Removes an leading and trailing spaces from a string. Replaces any extra spacing with a single space 
+ *  character.
+ * @param {string} string - The string to remove extra spacing from.
+ * @returns - The string with all leading and trailing spaces removed and all extra spacing replaced with
+ *      a single space character.
+ */
 const removeExtraSpacingFromString = (string) => {
     // remove leading and trailing white space
     string = string.trim();

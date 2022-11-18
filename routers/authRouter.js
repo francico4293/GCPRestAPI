@@ -22,6 +22,10 @@ const {
 // instantiate new router object
 const router = express.Router();
 
+/**
+ * Handler for GET /auth/authorization-url endpoint. This endpoint is used to retrieve the authorization url that
+ * will be used to redirect the end-user to the Google OAuth 2.0 endpoint.
+ */
 router.get('/authorization-url', async (req, res, next) => {
     try {
         // get url used to redirect end-user to Google OAuth 2.0 endpoint
@@ -33,6 +37,12 @@ router.get('/authorization-url', async (req, res, next) => {
     }
 });
 
+/**
+ * Handler for GET /auth/oauth endpoint. This endpoint is used by the Google OAuth 2.0 endpoint to redirect the user
+ * back to the application with an access code. This endpoint will used the access code in order to get an access token
+ * from Google. This endpoint will use the access token to request the user's information and will render a view greeting
+ * the user and displaying their unique user ID and a JSON web token they can use for authentication and authorization.
+ */
 router.get('/oauth', isStateValid, async (req, res) => {
     try {
         // exchange access code for tokens
