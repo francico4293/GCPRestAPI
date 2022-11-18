@@ -11,7 +11,9 @@ const {
     STRING, 
     NUMBER,
     INVALID_SPACING_REGEX,
-    SPACE_CHAR
+    SPACE_CHAR,
+    MIN_STRING_LENGTH,
+    MAX_STRING_LENGTH
 } = require('../constants/commonConstants');
 
 /**
@@ -27,7 +29,7 @@ const isMakeValid = (make) => {
     if (typeof make !== STRING) return false;
 
     // verify make is of valid length
-    if (make.length < 1 || make.length > 255) return false;
+    if (make.length < MIN_STRING_LENGTH || make.length > MAX_STRING_LENGTH) return false;
 
     // verify make is not all spaces
     if (make.trim().length === 0) return false;
@@ -52,7 +54,7 @@ const isModelValid = (model) => {
     if (typeof model !== STRING) return false;
 
     // verify model is of valid length
-    if (model.length < 1 || model.length > 255) return false;
+    if (model.length < MIN_STRING_LENGTH || model.length > MAX_STRING_LENGTH) return false;
 
     // verify model is not all spaces
     if (model.trim().length === 0) return false;

@@ -92,15 +92,17 @@ router.post('/', isJwtValid, async (req, res, next) => {
         // return aircraft object with status code 201
         res.status(201)
             .set(CONTENT_TYPE, APPLICATION_JSON)
-            .json({ 
-                id, 
-                make: req.body.make, 
-                model: req.body.model, 
-                wingspan: req.body.wingspan, 
-                hangar: null,
-                ownerId: req.jwt.sub, 
-                self: createSelfLink(req.protocol, req.get(HOST), req.baseUrl, id) 
-            });
+            .json(
+                { 
+                    id, 
+                    make: req.body.make, 
+                    model: req.body.model, 
+                    wingspan: req.body.wingspan, 
+                    hangar: null,
+                    ownerId: req.jwt.sub, 
+                    self: createSelfLink(req.protocol, req.get(HOST), req.baseUrl, id) 
+                }
+            );
     } catch (err) {
         next(err);
     }
@@ -136,15 +138,17 @@ router.get('/', isJwtValid, async (req, res, next) => {
 
         // populate aircrafts array in responseJson object with query results
         queryResults[0].forEach(result => {
-            responseJson.aircrafts.push({
-                id: parseInt(result[Datastore.KEY].id),
-                make: result.make,
-                model: result.model,
-                wingspan: result.wingspan,
-                hangar: result.hangar,
-                ownerId: result.ownerId,
-                self: createSelfLink(req.protocol, req.get(HOST), req.baseUrl, result[Datastore.KEY].id)
-            });
+            responseJson.aircrafts.push(
+                {
+                    id: parseInt(result[Datastore.KEY].id),
+                    make: result.make,
+                    model: result.model,
+                    wingspan: result.wingspan,
+                    hangar: result.hangar,
+                    ownerId: result.ownerId,
+                    self: createSelfLink(req.protocol, req.get(HOST), req.baseUrl, result[Datastore.KEY].id)
+                }
+            );
         });
         
         // if more results remain in datastore, add cursor in responseJson object 

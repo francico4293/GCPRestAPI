@@ -6,6 +6,7 @@ const { engine } = require('express-handlebars');
 const authRouter = require('./routers/authRouter');
 const usersRouter = require('./routers/usersRouter');
 const aircraftsRouter = require('./routers/aircraftsRouter');
+const hangarsRouter = require('./routers/hangarsRouter');
 const { 
     HBS, 
     VIEW_ENGINE,
@@ -32,6 +33,7 @@ app.use(express.static(__dirname + '/' + PUBLIC));
 app.use('/auth', authRouter);
 app.use('/users', usersRouter);
 app.use('/aircrafts', aircraftsRouter);
+app.use('/hangars', hangarsRouter);
 
 app.get('/', (req, res) => {
     res.render(LOGIN);
