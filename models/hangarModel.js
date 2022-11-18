@@ -2,7 +2,10 @@
 
 // imports
 const { Datastore } = require('@google-cloud/datastore');
-const { HANGARS } = require('../constants/datastoreConstants');
+const { 
+    HANGARS, 
+    RESULT_LIMIT 
+} = require('../constants/datastoreConstants');
 
 // create new datastore client
 const datastore = new Datastore();
@@ -17,5 +20,18 @@ const createHangar = async (name, location, capacity) => {
     return parseInt(key.id);
 }
 
+const getQueryResultsForHangars = async (cursor) => {
+    let query = datastore.createQuery(HANGARS).limit(RESULT_LIMIT);
+
+    if (cursor !== null && cursor !== undefined) {
+        query = query.start(cursor);
+    }
+
+    return await datastore.runQuery(query);
+}
+
 // exports
-module.exports = { createHangar };
+module.exports = { 
+    createHangar, 
+    getQueryResultsForHangars 
+};

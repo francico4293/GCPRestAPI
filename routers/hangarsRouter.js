@@ -2,7 +2,11 @@
 
 // imports
 const express = require('express');
-const { createHangar } = require('../models/hangarModel');
+const { Datastore } = require('@google-cloud/datastore');
+const { 
+    createHangar, 
+    getQueryResultsForHangars 
+} = require('../models/hangarModel');
 const { 
     isReqHeaderValid, 
     createSelfLink 
@@ -18,6 +22,7 @@ const {
     ANY_MIME_TYPE,
     HOST 
 } = require('../constants/serverConstants');
+const { MORE_RESULTS_AFTER_LIMIT } = require('../constants/datastoreConstants');
 
 // instantiate new router object
 const router = express.Router();
@@ -71,7 +76,7 @@ router.post('/', async (req, res, next) => {
                     name: req.body.name,
                     location: req.body.location,
                     capacity: req.body.capacity,
-                    planes: [],
+                    aircrafts: [],
                     self: createSelfLink(req.protocol, req.get(HOST), req.baseUrl, id)
                 }
             );
@@ -79,6 +84,58 @@ router.post('/', async (req, res, next) => {
         next(err);
     }
 });
+
+router.get('/', async (req, res, next) => {
+    try {
+        // verify accept header is */* or application/json
+        if (!isReqHeaderValid(req.headers.accept, APPLICATION_JSON, ANY_MIME_TYPE)) {
+            return res.status(406)
+                .set(CONTENT_TYPE, APPLICATION_JSON)
+                .json({ 'Error': 'This endpoint only serves application/json' });
+        }
+
+        // get raw query results for all hangars
+        const queryResults = await getQueryResultsForHangars(req.query.cursor);
+
+        // initialize object to send in response body
+        const responseJson = { hangars: [] };
+
+        // populate hangars array in responseJson with hangars from query results
+        queryResults[0].forEach(result => {
+            responseJson.hangars.push(
+                {
+                    id: parseInt(result[Datastore.KEY].id),
+                    name: result.name,
+                    location: result.location,
+                    capacity: result.capacity,
+                    aircrafts: result.aircrafts,
+                    self: createSelfLink(req.protocol, req.get(HOST), req.baseUrl, result[Datastore.KEY].id)
+                }
+            );
+        });
+
+        // add cursor as "next" parameter if more result remain
+        if (queryResults[1].moreResults === MORE_RESULTS_AFTER_LIMIT) {
+            responseJson.next = `${req.protocol}://${req.get(HOST)}${req.baseUrl}?cursor=${encodeURIComponent(queryResults[1].endCursor)}`;
+        }
+
+        // return object with hangars array and possible next attribute with status 200
+        res.status(200)
+            .set(CONTENT_TYPE, APPLICATION_JSON)
+            .json(responseJson);
+
+    } catch (err) {
+        next(err);
+    }
+});
+
+router.get('/:hangarId', async (req, res, next) => {
+    try {
+
+    } catch (err) {
+        next(err);
+    }
+})
 
 // exports
 module.exports = router;
