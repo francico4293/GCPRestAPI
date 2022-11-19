@@ -10,10 +10,13 @@ const {
 // create new datastore client
 const datastore = new Datastore();
 
-const createHangar = async (name, location, capacity) => {
+const createHangar = async (name, city, state, capacity) => {
     const key = datastore.key(HANGARS);
 
-    const entity = { key, data: { name, location, capacity, aircrafts: [] } };
+    const entity = { 
+        key,
+         data: { name, city, state, capacity, aircrafts: [] } 
+    };
 
     await datastore.save(entity);
 
@@ -42,7 +45,8 @@ const fetchHangarById = async (hangarId) => {
     return {
         id: parseInt(entity[0][Datastore.KEY].id),
         name: entity[0].name,
-        location: entity[0].location,
+        city: entity[0].city,
+        state: entity[0].state,
         capacity: entity[0].capacity,
         aircrafts: entity[0].aircrafts
     };

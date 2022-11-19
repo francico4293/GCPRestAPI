@@ -17,7 +17,8 @@ const {
 } = require('../utilities/serverUtils');
 const { 
     isNameValid, 
-    isLocationValid, 
+    isCityValid,
+    isStateValid, 
     isCapacityValid,
     createAircraftObjectsArray
 } = require('../utilities/hangarUtils');
@@ -67,11 +68,18 @@ router.post('/', async (req, res, next) => {
                 .json({ "Error": "Name attribute is missing or invalid" });
         }
 
-        // verify that location attribute is valid
-        if (!isLocationValid(req.body.location)) {
+        // verify that city attribute is valid
+        if (!isCityValid(req.body.city)) {
             return res.status(HTTP_400_BAD_REQUEST)
                 .set(CONTENT_TYPE, APPLICATION_JSON)
-                .json({ "Error": "Location attribute is missing or invalid" });
+                .json({ "Error": "City attribute is missing or invalid" });
+        }
+
+        // verify that state attribute is valid
+        if (!isStateValid(req.body.state)) {
+            return res.status(HTTP_400_BAD_REQUEST)
+                .set(CONTENT_TYPE, APPLICATION_JSON)
+                .json({ "Error": "State attribute is missing or invalid" });
         }
 
         // verify that capacity attribute is valid
@@ -82,7 +90,12 @@ router.post('/', async (req, res, next) => {
         }
 
         // create a new hangar using specified attribute values
-        const id = await createHangar(req.body.name, req.body.location, req.body.capacity);
+        const id = await createHangar(
+            req.body.name, 
+            req.body.city, 
+            req.body.state, 
+            req.body.capacity
+        );
 
         // return status 201 and newly created hangar object
         res.status(HTTP_201_CREATED)
@@ -91,7 +104,8 @@ router.post('/', async (req, res, next) => {
                 {
                     id,
                     name: req.body.name,
-                    location: req.body.location,
+                    city: req.body.city,
+                    state: req.body.state,
                     capacity: req.body.capacity,
                     aircrafts: [],
                     self: createSelfLink(req.protocol, req.get(HOST), req.baseUrl, id)
@@ -123,7 +137,8 @@ router.get('/', async (req, res, next) => {
                 {
                     id: parseInt(result[Datastore.KEY].id),
                     name: result.name,
-                    location: result.location,
+                    city: result.city,
+                    state: result.state,
                     capacity: result.capacity,
                     aircrafts: result.aircrafts.length === 0 
                         ? result.aircrafts 
@@ -219,17 +234,17 @@ router.put('/:hangarId/aircrafts/:aircraftId', isJwtValid, async (req, res, next
                 .json({ 'Error': 'No aircraft with this aircraftId exists' });
         }
 
-        if (aircraft.hangar !== null) {
-            return res.status(HTTP_400_BAD_REQUEST)
-                .set(CONTENT_TYPE, APPLICATION_JSON)
-                .json({ 'Error': 'This aircraft is already parked in a hangar' });
-        }
-
         // verify that the requester is the owner of the aircraft
         if (aircraft.ownerId !== req.jwt.sub) {
             return res.status(403)
                 .set(CONTENT_TYPE, APPLICATION_JSON)
                 .json({ 'Error': 'You are not authorized to perform this action' });
+        }
+
+        if (aircraft.hangar !== null) {
+            return res.status(HTTP_400_BAD_REQUEST)
+                .set(CONTENT_TYPE, APPLICATION_JSON)
+                .json({ 'Error': 'This aircraft is already parked in a hangar' });
         }
 
         // add the aircraft to the hangar

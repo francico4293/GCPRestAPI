@@ -11,7 +11,9 @@ const {
 const { 
     MIN_CAPACITY,
     MAX_CAPACITY,
-    HANGAR_NAME_LOCATION_REGEX
+    HANGAR_NAME_REGEX,
+    HANGAR_CITY_REGEX,
+    HANGAR_STATE_REGEX
 } = require('../constants/hangarConstants');
 const { HOST } = require('../constants/serverConstants');
 
@@ -27,22 +29,37 @@ const isNameValid = (name) => {
     if (name.trim().length === 0) return false;
 
     // verify name contains valid characters
-    if (!HANGAR_NAME_LOCATION_REGEX.test(name)) return false;
+    if (!HANGAR_NAME_REGEX.test(name)) return false;
 
     return true;
 }
 
-const isLocationValid = (location) => {
-    if (location === null || location === undefined) return false;
+const isCityValid = (city) => {
+    if (city === null || city === undefined) return false;
 
-    if (typeof location !== STRING) return false;
+    if (typeof city !== STRING) return false;
 
-    if (location.length < MIN_STRING_LENGTH || location.length > MAX_STRING_LENGTH) return false;
+    if (city.length < MIN_STRING_LENGTH || city.length > MAX_STRING_LENGTH) return false;
 
-    if (location.trim().length === 0) return false;
+    if (city.trim().length === 0) return false;
 
     // verify make contains valid characters
-    if (!HANGAR_NAME_LOCATION_REGEX.test(location)) return false;
+    if (!HANGAR_CITY_REGEX.test(city)) return false;
+
+    return true;
+}
+
+const isStateValid = (state) => {
+    if (state === null || state === undefined) return false;
+
+    if (typeof state !== STRING) return false;
+
+    if (state.length < MIN_STRING_LENGTH || state.length > MAX_STRING_LENGTH) return false;
+
+    if (state.trim().length === 0) return false;
+
+    // verify make contains valid characters
+    if (!HANGAR_STATE_REGEX.test(state)) return false;
 
     return true;
 }
@@ -69,7 +86,8 @@ const createAircraftObjectsArray = (req, aircraftIds) => {
 // exports
 module.exports = { 
     isNameValid,
-    isLocationValid,
+    isCityValid,
+    isStateValid,
     isCapacityValid,
     createAircraftObjectsArray
 };
