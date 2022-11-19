@@ -86,6 +86,16 @@ const fetchAircraftById = async (aircraftId) => {
     };
 }
 
+const updateAircraftHangar = async (aircraftId, hangarId) => {
+    const key = datastore.key([AIRCRAFTS, datastore.int(aircraftId)]);
+
+    const entity = await datastore.get(key);
+
+    entity[0].hangar = parseInt(hangarId);
+
+    return await datastore.save(entity);
+}
+
 /**
  * Deletes the aircraft with aircraftId from the Datastore Aircrafts kind.
  * @param {string} aircraftId - The ID of the aircraft.
@@ -104,5 +114,6 @@ module.exports = {
     createAircraft, 
     getQueryResultsForAircraftsByOwner,
     fetchAircraftById,
+    updateAircraftHangar,
     deleteAircraftById
 };

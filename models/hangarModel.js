@@ -48,9 +48,27 @@ const fetchHangarById = async (hangarId) => {
     };
 }
 
+const updateHangarAircrafts = async (hangarId, aircraftId) => {
+    const key = datastore.key([HANGARS, datastore.int(hangarId)]);
+
+    const entity = await datastore.get(key);
+
+    entity[0].aircrafts.push(parseInt(aircraftId));
+
+    return await datastore.save(entity);
+}
+
+const deleteHangarById = async (hangarId) => {
+    const key = datastore.key([HANGARS, datastore.int(hangarId)]);
+
+    return await datastore.delete(key);
+}
+
 // exports
 module.exports = { 
     createHangar, 
     getQueryResultsForHangars,
-    fetchHangarById
+    fetchHangarById,
+    updateHangarAircrafts,
+    deleteHangarById
 };

@@ -155,7 +155,12 @@ router.get('/', isJwtValid, async (req, res, next) => {
                     make: result.make,
                     model: result.model,
                     wingspan: result.wingspan,
-                    hangar: result.hangar,
+                    hangar: result.hangar === null 
+                        ? null 
+                        : { 
+                            id: result.hangar, 
+                            self: createSelfLink(req.protocol, req.get(HOST), '/hangars', result.hangar)
+                        },
                     ownerId: result.ownerId,
                     self: createSelfLink(req.protocol, req.get(HOST), req.baseUrl, result[Datastore.KEY].id)
                 }
@@ -216,6 +221,14 @@ router.get('/:aircraftId', isJwtValid, async (req, res) => {
 
         // add a self link to the aircraft object
         aircraft.self = createSelfLink(req.protocol, req.get(HOST), req.baseUrl, req.params.aircraftId);
+
+        // add self link to hangar if there is one
+        aircraft.hangar = aircraft.hangar === null 
+            ? null 
+            : {
+                id: aircraft.hangar, 
+                self: createSelfLink(req.protocol, req.get(HOST), '/hangars', aircraft.hangar)
+            };
 
         // return aircraft object with status 200
         res.status(HTTP_200_OK)

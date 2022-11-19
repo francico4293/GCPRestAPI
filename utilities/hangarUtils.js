@@ -1,6 +1,7 @@
 'use strict';
 
 // imports
+const { createSelfLink } = require('../utilities/serverUtils');
 const { 
     STRING, 
     NUMBER,
@@ -12,6 +13,7 @@ const {
     MAX_CAPACITY,
     HANGAR_NAME_LOCATION_REGEX
 } = require('../constants/hangarConstants');
+const { HOST } = require('../constants/serverConstants');
 
 // TODO: Add regex validation for name and location
 
@@ -55,9 +57,19 @@ const isCapacityValid = (capacity) => {
     return true;
 }
 
+const createAircraftObjectsArray = (req, aircraftIds) => {
+    return aircraftIds.map(aircraftId => (
+        {
+            id: aircraftId,
+            self: createSelfLink(req.protocol, req.get(HOST), '/aircrafts', aircraftId)
+        }
+    ));
+}
+
 // exports
 module.exports = { 
     isNameValid,
     isLocationValid,
-    isCapacityValid
+    isCapacityValid,
+    createAircraftObjectsArray
 };
