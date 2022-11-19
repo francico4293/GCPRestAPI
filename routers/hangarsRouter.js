@@ -140,9 +140,7 @@ router.get('/', async (req, res, next) => {
                     city: result.city,
                     state: result.state,
                     capacity: result.capacity,
-                    aircrafts: result.aircrafts.length === 0 
-                        ? result.aircrafts 
-                        : createAircraftObjectsArray(req, result.aircrafts),
+                    aircrafts: createAircraftObjectsArray(req, result.aircrafts),
                     self: createSelfLink(req.protocol, req.get(HOST), req.baseUrl, result[Datastore.KEY].id)
                 }
             );
@@ -185,9 +183,8 @@ router.get('/:hangarId', async (req, res, next) => {
         // set self link on hangar object
         hangar.self = createSelfLink(req.protocol, req.get(HOST), req.baseUrl, req.params.hangarId);
 
-        hangar.aircrafts = hangar.aircrafts.length === 0 
-            ? hangar.aircrafts 
-            : createAircraftObjectsArray(req, hangar.aircrafts);
+        // create array of objects containing aircraft id and aircraft self link
+        hangar.aircrafts = createAircraftObjectsArray(req, hangar.aircrafts);
 
         // return hangar object and status 200
         res.status(HTTP_200_OK)
