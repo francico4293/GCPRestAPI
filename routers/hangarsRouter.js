@@ -45,6 +45,11 @@ const { fetchAircraftById } = require('../models/aircraftModel');
 // instantiate new router object
 const router = express.Router();
 
+/**
+ * Handler for POST /hangars endpoint. This endpoint is used to create a new hangar by specifying the
+ * name, city, state, and capacity of the hangar. This endpoint does not require authentication or
+ * authorization.
+ */
 router.post('/', async (req, res, next) => {
     try {
         // verify content-type in request body is application/json
@@ -116,6 +121,10 @@ router.post('/', async (req, res, next) => {
     }
 });
 
+/**
+ * Handler for GET /hangars. This endpoint is used to retrieve all hangars that have been created. This 
+ * endpoint does not require authentication or authorization.
+ */
 router.get('/', async (req, res, next) => {
     try {
         // verify accept header is */* or application/json
@@ -161,6 +170,10 @@ router.get('/', async (req, res, next) => {
     }
 });
 
+/**
+ * Handler for GET /hangars/:hangarId. This endpoint is used to fetch a hangar by specifying its hangarId as
+ * a request parameter. This endpoint does not require authorization or authentication.
+ */
 router.get('/:hangarId', async (req, res, next) => {
     try {
         // verify accept header is */* or application/json
@@ -195,6 +208,11 @@ router.get('/:hangarId', async (req, res, next) => {
     }
 });
 
+/**
+ * Handler for PUT /hangars/:hangarId/aircrafts/:aircraftId endpoint. This endpoint allows the owner of the
+ * aircraft with aircraftId to park the aircraft in the hangar with hangarId. This endpoint requires a valid
+ * JSON web token to be provided as a Bearer Token.
+ */
 router.put('/:hangarId/aircrafts/:aircraftId', isJwtValid, async (req, res, next) => {
     try {
         // if no jwt or an invalid jwt was provided return a 401 status code
@@ -257,7 +275,11 @@ router.put('/:hangarId/aircrafts/:aircraftId', isJwtValid, async (req, res, next
     }
 });
 
-// TODO: Add logic to remove hangar from aircrafts in hangar
+/**
+ * Handler for DELETE /hangars/:hangarId endpoint. This endpoint is used to delete the hangar with
+ * the hangarId provided as a request parameter. If the hangar being deleted has any aircrafts parked
+ * in it, those aircrafts will go into flight.
+ */
 router.delete('/:hangarId', async (req, res, next) => {
     try {
         // fetch the hangar with hangarId

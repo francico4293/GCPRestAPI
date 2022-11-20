@@ -242,7 +242,9 @@ router.get('/:aircraftId', isJwtValid, async (req, res) => {
 
 /**
  * Handler for DELETE /aircrafts/:aircraftId endpoint. This endpoint allows a user to delete an
- * aircraft they own by specifying the aircraft's unique aircraftId as a request parameter.
+ * aircraft they own by specifying the aircraft's unique aircraftId as a request parameter. If
+ * the aircraft is parked in a hangar, the aircraft will automatically be removed from the hangar
+ * it is parked in.
  */
 router.delete('/:aircraftId', isJwtValid, async (req, res) => {
     try {
