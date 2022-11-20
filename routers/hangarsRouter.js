@@ -38,7 +38,8 @@ const {
     HTTP_200_OK,
     HTTP_404_NOT_FOUND,
     HTTP_401_UNAUTHORIZED,
-    HTTP_204_NO_CONTENT
+    HTTP_204_NO_CONTENT,
+    HTTP_403_FORBIDDEN
 } = require('../constants/statusCodes');
 const { fetchAircraftById } = require('../models/aircraftModel');
 
@@ -251,7 +252,7 @@ router.put('/:hangarId/aircrafts/:aircraftId', isJwtValid, async (req, res, next
 
         // verify that the requester is the owner of the aircraft
         if (aircraft.ownerId !== req.jwt.sub) {
-            return res.status(403)
+            return res.status(HTTP_403_FORBIDDEN)
                 .set(CONTENT_TYPE, APPLICATION_JSON)
                 .json({ 'Error': 'You are not authorized to perform this action' });
         }

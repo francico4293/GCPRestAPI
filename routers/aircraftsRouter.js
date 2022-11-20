@@ -159,7 +159,7 @@ router.get('/', isJwtValid, async (req, res, next) => {
                     hangar: result.hangar === null 
                         ? null 
                         : { 
-                            id: result.hangar, 
+                            id: parseInt(result.hangar), 
                             self: createSelfLink(req.protocol, req.get(HOST), '/hangars', result.hangar)
                         },
                     ownerId: result.ownerId,
@@ -227,7 +227,7 @@ router.get('/:aircraftId', isJwtValid, async (req, res) => {
         aircraft.hangar = aircraft.hangar === null 
             ? null 
             : {
-                id: aircraft.hangar, 
+                id: parseInt(aircraft.hangar), 
                 self: createSelfLink(req.protocol, req.get(HOST), '/hangars', aircraft.hangar)
             };
 
