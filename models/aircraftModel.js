@@ -40,7 +40,8 @@ const createAircraft = async (make, model, wingspan, ownerId) => {
  * @param {string} ownerId - The ID of the owner of the aircrafts to query for.
  * @param {string} cursor - The location in the Datastore Aircrafts kind after the last result that was
  *      returned.
- * @returns - A raw query results object generated from querying the Datastore Aircrafts kind.
+ * @returns - A raw query results object generated from querying the Datastore Aircrafts kind for no more
+ *      than 5 aircraft entities.
  */
 const getQueryResultsForAircraftsByOwner = async (ownerId, cursor) => {
     // create a query to fetch no more than 5 aircrafts from datastore whose ownerId equals the specified

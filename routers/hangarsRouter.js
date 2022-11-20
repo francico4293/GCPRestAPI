@@ -273,6 +273,7 @@ router.delete('/:hangarId', async (req, res, next) => {
         // delete the hangar
         await deleteHangarById(req.params.hangarId);
 
+        // mark each aircraft in hangar as being "in flight"
         for (let aircraft of hangar.aircrafts) {
             await updateAircraftHangar(aircraft, null);
         }
