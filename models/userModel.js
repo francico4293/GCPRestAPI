@@ -20,7 +20,7 @@ const createUser = async (userId, givenName, familyName) => {
     const key = datastore.key([USERS, userId]);
 
     // create user entity
-    const entity = { key, data: { givenName, familyName } };
+    const entity = { key, data: { givenName, familyName, aircrafts: 0 } };
 
     // save user entity to datastore
     return await datastore.save(entity);
@@ -29,7 +29,7 @@ const createUser = async (userId, givenName, familyName) => {
 /**
  * Fetches the user with userId from the Datastore Users kind.
  * @param {string} userId - The unique ID of the user.
- * @returns - A user object with id, givenName, and familyName attributes.
+ * @returns - A user object with id, givenName, familyName, and aircrafts attributes.
  */
 const fetchUser = async (userId) => {
     // create key used to fetch user with userId
@@ -47,7 +47,8 @@ const fetchUser = async (userId) => {
     return {
         id: user[0][Datastore.KEY].name,
         givenName: user[0].givenName,
-        familyName: user[0].familyName
+        familyName: user[0].familyName,
+        aircrafts: user[0].aircrafts
     }
 }
 
@@ -67,14 +68,72 @@ const fetchAllUsers = async () => {
         { 
             id: result[Datastore.KEY].name,  
             givenName: result.givenName,
-            familyName: result.familyName
+            familyName: result.familyName,
+            aircrafts: result.aircrafts
         }
     ));
+}
+
+/**
+ * Fetches the number of aircrafts owned by the user with userId.
+ * @param {string} userId - The ID of the user. 
+ * @returns - The number of aircrafts owned by the user with userId.
+ */
+const fetchNumberOfUserAircrafts = async (userId) => {
+    // generate entity key used to fetch the user with userId
+    const key = datastore.key([USERS, userId]);
+
+    // fetch the entity using entity key
+    const entity = await datastore.get(key);
+
+    // return number of aircrafts owned by the user
+    return entity[0].aircrafts;
+}
+
+/**
+ * Increases the number of aircrafts owned by the user with userId by 1.
+ * @param {string} userId - The ID of the user.
+ * @returns - The result of saving the updated user entity to the Datastore Users kind.
+ */
+const incrementNumberOfUserAircrafts = async (userId) => {
+    // generate entity key used to fetch the user with userId
+    const key = datastore.key([USERS, userId]);
+
+    // fetch the entity using entity key
+    const entity = await datastore.get(key);
+
+    // add 1 to the current number of aircrafts owned by the user
+    entity[0].aircrafts = entity[0].aircrafts + 1;
+
+    // save the updated user entity
+    return await datastore.save(entity);
+}
+
+/**
+ * Decreases the number of aircrafts owned by the user with userId by 1.
+ * @param {string} userId - The ID of the user.
+ * @returns - The result of saving the updated user entity to the Datastore Users kind.
+ */
+const decrementNumberOfUserAircrafts = async (userId) => {
+    // generate entity key used to fetch the user with userId
+    const key = datastore.key([USERS,userId]);
+
+    // fetch the entity using entity key
+    const entity = await datastore.get(key);
+
+    // subtract 1 from the current number of aircrafts owned by the user
+    entity[0].aircrafts = entity[0].aircrafts - 1;
+
+    // save the updated user entity
+    return await datastore.save(entity);
 }
 
 // exports
 module.exports = { 
     createUser, 
     fetchUser, 
-    fetchAllUsers 
+    fetchAllUsers ,
+    fetchNumberOfUserAircrafts,
+    incrementNumberOfUserAircrafts,
+    decrementNumberOfUserAircrafts
 };

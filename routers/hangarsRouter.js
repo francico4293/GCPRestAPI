@@ -10,7 +10,10 @@ const {
     addAircraftToHangar,
     deleteHangarById
 } = require('../models/hangarModel');
-const { updateAircraftHangar } = require('../models/aircraftModel');
+const { 
+    updateAircraftHangar, 
+    fetchAircraftById 
+} = require('../models/aircraftModel');
 const { 
     isReqHeaderValid, 
     createSelfLink 
@@ -41,7 +44,7 @@ const {
     HTTP_204_NO_CONTENT,
     HTTP_403_FORBIDDEN
 } = require('../constants/statusCodes');
-const { fetchAircraftById } = require('../models/aircraftModel');
+const { NUMBER_OF_HANGARS } = require('../constants/hangarConstants');
 
 // instantiate new router object
 const router = express.Router();
@@ -105,6 +108,9 @@ router.post('/', async (req, res, next) => {
             req.body.capacity
         );
 
+        // increment number of hangars
+        req.app.set(NUMBER_OF_HANGARS, req.app.get(NUMBER_OF_HANGARS) + 1);
+
         // return status 201 and newly created hangar object
         res.status(HTTP_201_CREATED)
             .set(CONTENT_TYPE, APPLICATION_JSON)
@@ -141,7 +147,7 @@ router.get('/', async (req, res, next) => {
         const queryResults = await getQueryResultsForHangars(req.query.cursor);
 
         // initialize object to send in response body
-        const responseJson = { hangars: [] };
+        const responseJson = { count: req.app.get(NUMBER_OF_HANGARS), hangars: [] };
 
         // populate hangars array in responseJson with hangars from query results
         queryResults[0].forEach(result => {
@@ -297,6 +303,9 @@ router.delete('/:hangarId', async (req, res, next) => {
 
         // delete the hangar
         await deleteHangarById(req.params.hangarId);
+
+        // decrement number of hangars
+        req.app.set(NUMBER_OF_HANGARS, req.app.get(NUMBER_OF_HANGARS) - 1);
 
         // mark each aircraft in hangar as being "in flight"
         for (let aircraft of hangar.aircrafts) {

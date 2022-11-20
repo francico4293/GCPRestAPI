@@ -12,6 +12,11 @@ const {
 } = require('../models/aircraftModel');
 const { removeAircraftFromHangar } = require('../models/hangarModel');
 const { 
+    fetchNumberOfUserAircrafts, 
+    incrementNumberOfUserAircrafts ,
+    decrementNumberOfUserAircrafts
+} = require('../models/userModel');
+const { 
     isReqHeaderValid, 
     createSelfLink 
 } = require('../utilities/serverUtils');
@@ -101,6 +106,9 @@ router.post('/', isJwtValid, async (req, res, next) => {
         // create new aircraft with attributes from request body
         const id = await createAircraft(req.body.make, req.body.model, req.body.wingspan, req.jwt.sub);
 
+        // increment number of aircrafts owned by user
+        await incrementNumberOfUserAircrafts(req.jwt.sub);
+
         // return aircraft object with status code 201
         res.status(HTTP_201_CREATED)
             .set(CONTENT_TYPE, APPLICATION_JSON)
@@ -145,8 +153,11 @@ router.get('/', isJwtValid, async (req, res, next) => {
         // fetch all aircrafts for jwt sub from datastore
         const queryResults = await getQueryResultsForAircraftsByOwner(req.jwt.sub, req.query.cursor);
 
+        // get the count of aircrafts for user
+        const numberOfUserAircrafts = await fetchNumberOfUserAircrafts(req.jwt.sub);
+
         // initialize object to send in response body
-        const responseJson = { aircrafts: [] };
+        const responseJson = { count: numberOfUserAircrafts, aircrafts: [] };
 
         // populate aircrafts array in responseJson object with query results
         queryResults[0].forEach(result => {
@@ -246,7 +257,7 @@ router.get('/:aircraftId', isJwtValid, async (req, res) => {
  * the aircraft is parked in a hangar, the aircraft will automatically be removed from the hangar
  * it is parked in.
  */
-router.delete('/:aircraftId', isJwtValid, async (req, res) => {
+router.delete('/:aircraftId', isJwtValid, async (req, res, next) => {
     try {
         // if no jwt or an invalid jwt was provided return a 401 status code
         if (req.jwt === null) {
@@ -272,8 +283,11 @@ router.delete('/:aircraftId', isJwtValid, async (req, res) => {
                 .json({ 'Error': 'You are not authorized to perform this action' });
         }
 
-        // delete the aircrafy with aircraftId
+        // delete the aircraft with aircraftId
         await deleteAircraftById(req.params.aircraftId);
+
+        // decrement number of aircrafts owned by user
+        await decrementNumberOfUserAircrafts(req.jwt.sub);
 
         // remove aircraft from hangar if it is parked in one
         aircraft.hangar !== null && await removeAircraftFromHangar(aircraft.hangar, req.params.aircraftId);

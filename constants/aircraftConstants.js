@@ -15,5 +15,5 @@ module.exports = {
     MAX_AIRCRAFT_WINGSPAN, 
     AIRCRAFT_MAKE_REGEX, 
     AIRCRAFT_MODEL_REGEX,
-    OWNER_ID
+    OWNER_ID,
 };
