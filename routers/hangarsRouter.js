@@ -46,6 +46,8 @@ const { fetchAircraftById } = require('../models/aircraftModel');
 // instantiate new router object
 const router = express.Router();
 
+// TODO: Add spacing fix to name, city, state in POST /hangars end point - move function in aircraftUtils to a commonUtils file
+
 /**
  * Handler for POST /hangars endpoint. This endpoint is used to create a new hangar by specifying the
  * name, city, state, and capacity of the hangar. This endpoint does not require authentication or
