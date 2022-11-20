@@ -25,7 +25,7 @@ const createHangar = async (name, city, state, capacity) => {
     // create hangar entity
     const entity = { 
         key,
-         data: { name, city, state, capacity, aircrafts: [] } 
+        data: { name, city, state, capacity, aircrafts: [] } 
     };
 
     // save hangar entity in Datastore Hangars kind

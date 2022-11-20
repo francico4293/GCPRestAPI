@@ -87,13 +87,24 @@ const fetchAircraftById = async (aircraftId) => {
     };
 }
 
+/**
+ * Updates the hangar attribute of the aircraft entity with aircraftId.
+ * @param {string} aircraftId - The ID of the aircraft.
+ * @param {string} hangarId - The ID of the hangar. If the aircraft is being marked as "in flight" this 
+ *      value should be null.
+ * @returns - The result of saving the updated aircraft entity to the Datastore Aircrafts kind.
+ */
 const updateAircraftHangar = async (aircraftId, hangarId) => {
+    // create entity key used to fetch the aircraft with aircraftId
     const key = datastore.key([AIRCRAFTS, datastore.int(aircraftId)]);
 
+    // fetch the aircraft entity using the entity key
     const entity = await datastore.get(key);
 
+    // update the aircraft entity hangar attribute
     entity[0].hangar = hangarId;
 
+    // save the updated aircraft entity to Datastore Aircrafts kind.
     return await datastore.save(entity);
 }
 
