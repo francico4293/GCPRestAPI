@@ -7,7 +7,7 @@ const {
     createHangar, 
     getQueryResultsForHangars,
     fetchHangarById,
-    updateHangarAircrafts,
+    addAircraftToHangar,
     deleteHangarById
 } = require('../models/hangarModel');
 const { updateAircraftHangar } = require('../models/aircraftModel');
@@ -245,7 +245,7 @@ router.put('/:hangarId/aircrafts/:aircraftId', isJwtValid, async (req, res, next
         }
 
         // add the aircraft to the hangar
-        await updateHangarAircrafts(req.params.hangarId, req.params.aircraftId);
+        await addAircraftToHangar(req.params.hangarId, req.params.aircraftId);
 
         // mark the aircraft as parked in a hangar
         await updateAircraftHangar(req.params.aircraftId, req.params.hangarId);

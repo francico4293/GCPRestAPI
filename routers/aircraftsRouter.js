@@ -10,6 +10,7 @@ const {
     fetchAircraftById,
     deleteAircraftById
 } = require('../models/aircraftModel');
+const { removeAircraftFromHangar } = require('../models/hangarModel');
 const { 
     isReqHeaderValid, 
     createSelfLink 
@@ -269,6 +270,9 @@ router.delete('/:aircraftId', isJwtValid, async (req, res) => {
                 .set(CONTENT_TYPE, APPLICATION_JSON)
                 .json({ 'Error': 'You are not authorized to perform this action' });
         }
+
+        // remove aircraft from hangar if it is parked in one
+        aircraft.hangar !== null && await removeAircraftFromHangar(aircraft.hangar, req.params.aircraftId);
 
         // delete the aircrafy with aircraftId
         await deleteAircraftById(req.params.aircraftId);
