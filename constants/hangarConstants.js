@@ -8,7 +8,7 @@ const HANGAR_NAME_REGEX = /^[A-Za-z0-9 ./,-]+$/;
 
 const HANGAR_STATE_REGEX = /^[A-Za-z ]+$/;
 
-const HANGAR_CITY_REGEX = /^[A-Za-z .]+$/;
+const HANGAR_CITY_REGEX = /^[A-Za-z .,]+$/;
 
 module.exports = {
     MIN_CAPACITY,
