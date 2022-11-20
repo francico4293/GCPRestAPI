@@ -23,9 +23,9 @@ const {
 const { 
     isMakeValid, 
     isModelValid,
-    isWingspanValid,
-    removeExtraSpacingFromString 
+    isWingspanValid
 } = require('../utilities/aircraftUtils');
+const { removeExtraSpacingFromString } = require('../utilities/formattingUtils');
 const { 
     CONTENT_TYPE, 
     APPLICATION_JSON, 
@@ -83,7 +83,7 @@ router.post('/', isJwtValid, async (req, res, next) => {
                 .json({ 'Error': 'Make attribute is missing or invalid' });
         }
 
-        // sanitize make
+        // format make
         req.body.make = removeExtraSpacingFromString(req.body.make);
 
         // verify model is provided in request and is valid
@@ -93,7 +93,7 @@ router.post('/', isJwtValid, async (req, res, next) => {
                 .json({ 'Error': 'Model attribute is missing or invalid' });
         }
 
-        // sanitize model
+        // format model
         req.body.model = removeExtraSpacingFromString(req.body.model);
 
         // verify length is provided in request and is valid

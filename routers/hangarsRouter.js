@@ -18,6 +18,7 @@ const {
     isReqHeaderValid, 
     createSelfLink 
 } = require('../utilities/serverUtils');
+const { removeExtraSpacingFromString } = require('../utilities/formattingUtils');
 const { 
     isNameValid, 
     isCityValid,
@@ -79,6 +80,9 @@ router.post('/', async (req, res, next) => {
                 .json({ "Error": "Name attribute is missing or invalid" });
         }
 
+        // format name
+        req.body.name = removeExtraSpacingFromString(req.body.name);
+
         // verify that city attribute is valid
         if (!isCityValid(req.body.city)) {
             return res.status(HTTP_400_BAD_REQUEST)
@@ -86,12 +90,18 @@ router.post('/', async (req, res, next) => {
                 .json({ "Error": "City attribute is missing or invalid" });
         }
 
+        // format city
+        req.body.city = removeExtraSpacingFromString(req.body.city);
+
         // verify that state attribute is valid
         if (!isStateValid(req.body.state)) {
             return res.status(HTTP_400_BAD_REQUEST)
                 .set(CONTENT_TYPE, APPLICATION_JSON)
                 .json({ "Error": "State attribute is missing or invalid" });
         }
+
+        // format state
+        req.body.state = removeExtraSpacingFromString(req.body.state);
 
         // verify that capacity attribute is valid
         if (!isCapacityValid(req.body.capacity)) {
