@@ -240,7 +240,6 @@ router.get('/:aircraftId', isJwtValid, async (req, res) => {
     }
 });
 
-// TODO: Add logic to remove deleted aircraft from a hangar
 /**
  * Handler for DELETE /aircrafts/:aircraftId endpoint. This endpoint allows a user to delete an
  * aircraft they own by specifying the aircraft's unique aircraftId as a request parameter.
@@ -271,11 +270,11 @@ router.delete('/:aircraftId', isJwtValid, async (req, res) => {
                 .json({ 'Error': 'You are not authorized to perform this action' });
         }
 
-        // remove aircraft from hangar if it is parked in one
-        aircraft.hangar !== null && await removeAircraftFromHangar(aircraft.hangar, req.params.aircraftId);
-
         // delete the aircrafy with aircraftId
         await deleteAircraftById(req.params.aircraftId);
+
+        // remove aircraft from hangar if it is parked in one
+        aircraft.hangar !== null && await removeAircraftFromHangar(aircraft.hangar, req.params.aircraftId);
 
         // return status 204
         res.status(HTTP_204_NO_CONTENT).send();

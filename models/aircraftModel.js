@@ -91,7 +91,7 @@ const updateAircraftHangar = async (aircraftId, hangarId) => {
 
     const entity = await datastore.get(key);
 
-    entity[0].hangar = parseInt(hangarId);
+    entity[0].hangar = hangarId;
 
     return await datastore.save(entity);
 }

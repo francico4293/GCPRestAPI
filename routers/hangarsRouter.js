@@ -273,6 +273,10 @@ router.delete('/:hangarId', async (req, res, next) => {
         // delete the hangar
         await deleteHangarById(req.params.hangarId);
 
+        for (let aircraft of hangar.aircrafts) {
+            await updateAircraftHangar(aircraft, null);
+        }
+
         // return status 204
         res.status(204).send();
     } catch (err) {
