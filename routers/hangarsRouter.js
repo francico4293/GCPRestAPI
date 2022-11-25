@@ -10,8 +10,8 @@ const {
     addAircraftToHangar,
     deleteHangarById
 } = require('../models/hangarModel');
-const { 
-    updateAircraftHangar, 
+const {
+    updateAircraft,
     fetchAircraftById 
 } = require('../models/aircraftModel');
 const { 
@@ -49,8 +49,6 @@ const { NUMBER_OF_HANGARS } = require('../constants/hangarConstants');
 
 // instantiate new router object
 const router = express.Router();
-
-// TODO: Add spacing fix to name, city, state in POST /hangars end point - move function in aircraftUtils to a commonUtils file
 
 /**
  * Handler for POST /hangars endpoint. This endpoint is used to create a new hangar by specifying the
@@ -242,7 +240,7 @@ router.put('/:hangarId/aircrafts/:aircraftId', isJwtValid, async (req, res, next
         }
 
         // fetch the hangar with hangarId
-        const hangar = await fetchHangarById(req.params.hangarId);
+        let hangar = await fetchHangarById(req.params.hangarId);
 
         // if hangar is null then no hangar with hangarId exists
         if (hangar === null) {
@@ -259,7 +257,7 @@ router.put('/:hangarId/aircrafts/:aircraftId', isJwtValid, async (req, res, next
         }
 
         // fetch the aircraft with aircraftId
-        const aircraft = await fetchAircraftById(req.params.aircraftId);
+        let aircraft = await fetchAircraftById(req.params.aircraftId);
 
         // if aircraft is null then no aircraft with aircraftId exists
         if (aircraft === null) {
@@ -285,7 +283,7 @@ router.put('/:hangarId/aircrafts/:aircraftId', isJwtValid, async (req, res, next
         await addAircraftToHangar(req.params.hangarId, req.params.aircraftId);
 
         // mark the aircraft as parked in a hangar
-        await updateAircraftHangar(req.params.aircraftId, req.params.hangarId);
+        aircraft = await updateAircraft(req.params.aircraftId, { hangar: req.params.hangarId });
 
         // return status 204
         res.status(HTTP_204_NO_CONTENT).send();
@@ -319,7 +317,7 @@ router.delete('/:hangarId', async (req, res, next) => {
 
         // mark each aircraft in hangar as being "in flight"
         for (let aircraft of hangar.aircrafts) {
-            await updateAircraftHangar(aircraft, null);
+            await updateAircraft(aircraft, { hangar: null });
         }
 
         // return status 204

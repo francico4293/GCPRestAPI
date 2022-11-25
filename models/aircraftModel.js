@@ -88,24 +88,33 @@ const fetchAircraftById = async (aircraftId) => {
 }
 
 /**
- * Updates the hangar attribute of the aircraft entity with aircraftId.
+ * Updates the attributes of the aircraft with aircraftId.
  * @param {string} aircraftId - The ID of the aircraft.
- * @param {string} hangarId - The ID of the hangar. If the aircraft is being marked as "in flight" this 
- *      value should be null.
- * @returns - The result of saving the updated aircraft entity to the Datastore Aircrafts kind.
+ * @param {object} updateObject - An object containing attributes that the aircraft will be updated with.
+ * @returns - An object representing the update aircraft with id, make, model, wingspan, hangar, and ownerId 
+ *      attributes.
  */
-const updateAircraftHangar = async (aircraftId, hangarId) => {
-    // create entity key used to fetch the aircraft with aircraftId
+const updateAircraft = async (aircraftId, updateObject) => {
     const key = datastore.key([AIRCRAFTS, datastore.int(aircraftId)]);
 
-    // fetch the aircraft entity using the entity key
     const entity = await datastore.get(key);
 
-    // update the aircraft entity hangar attribute
-    entity[0].hangar = hangarId;
+    Object.keys(updateObject).forEach(key => {
+        if (Object.keys(entity[0]).includes(key)) {
+            entity[0][key] = updateObject[key];
+        }
+    });
 
-    // save the updated aircraft entity to Datastore Aircrafts kind.
-    return await datastore.save(entity);
+    await datastore.save(entity);
+
+    return {
+        id: parseInt(entity[0][Datastore.KEY].id),
+        make: entity[0].make,
+        model: entity[0].model,
+        wingspan: entity[0].wingspan,
+        hangar: entity[0].hangar,
+        ownerId: entity[0].ownerId
+    };
 }
 
 /**
@@ -126,6 +135,6 @@ module.exports = {
     createAircraft, 
     getQueryResultsForAircraftsByOwner,
     fetchAircraftById,
-    updateAircraftHangar,
+    updateAircraft,
     deleteAircraftById
 };

@@ -8,6 +8,7 @@ const {
     createAircraft, 
     getQueryResultsForAircraftsByOwner,
     fetchAircraftById,
+    updateAircraft,
     deleteAircraftById
 } = require('../models/aircraftModel');
 const { removeAircraftFromHangar } = require('../models/hangarModel');
@@ -96,7 +97,7 @@ router.post('/', isJwtValid, async (req, res, next) => {
         // format model
         req.body.model = removeExtraSpacingFromString(req.body.model);
 
-        // verify length is provided in request and is valid
+        // verify wingspan is provided in request and is valid
         if (!isWingspanValid(req.body.wingspan)) {
             return res.status(HTTP_400_BAD_REQUEST)
                 .set(CONTENT_TYPE, APPLICATION_JSON)
@@ -198,7 +199,7 @@ router.get('/', isJwtValid, async (req, res, next) => {
  * Handler for GET /aircrafts/:aircraftId endpoint. This endpoint allows a user to get an aircraft that they
  * own using the aircraft's unique aircraftId as a request parameter.
  */
-router.get('/:aircraftId', isJwtValid, async (req, res) => {
+router.get('/:aircraftId', isJwtValid, async (req, res, next) => {
     try {
         // if no jwt or an invalid jwt was provided return a 401 status code
         if (req.jwt === null) {
@@ -244,6 +245,92 @@ router.get('/:aircraftId', isJwtValid, async (req, res) => {
 
         // return aircraft object with status 200
         res.status(HTTP_200_OK)
+            .set(CONTENT_TYPE, APPLICATION_JSON)
+            .json(aircraft);
+    } catch (err) {
+        next(err);
+    }
+});
+
+/**
+ * 
+ */
+router.patch('/:aircraftId', isJwtValid, async (req, res, next) => {
+    try {
+        // if no jwt or an invalid jwt was provided return a 401 status code
+        if (req.jwt === null) {
+            return res.status(HTTP_401_UNAUTHORIZED)
+                .set(CONTENT_TYPE, APPLICATION_JSON)
+                .json({ "Error": "Bearer token is missing or invalid" });
+        }
+
+        // verify content-type in request body is application/json
+        if (!isReqHeaderValid(req.headers[CONTENT_TYPE], APPLICATION_JSON)) {
+            return res.status(HTTP_415_UNSUPPORTED_MEDIA_TYPE)
+                .set(CONTENT_TYPE, APPLICATION_JSON)
+                .json({ 'Error': 'This endpoint only accepts application/json' });
+        }
+
+        // verify accept header is */* or application/json
+        if (!isReqHeaderValid(req.headers.accept, APPLICATION_JSON, ANY_MIME_TYPE)) {
+            return res.status(HTTP_406_NOT_ACCEPTABLE)
+                .set(CONTENT_TYPE, APPLICATION_JSON)
+                .json({ 'Error': 'This endpoint only serves application/json' });
+        }
+
+        // check if make was provided in request body
+        if (req.body.make !== null && req.body.make !== undefined) {
+            // verify that make attribute value is valid
+            if (!isMakeValid(req.body.make)) {
+                return res.status(HTTP_400_BAD_REQUEST)
+                    .set(CONTENT_TYPE, APPLICATION_JSON)
+                    .json({ 'Error': 'Make attribute is invalid' });
+            }
+
+            // format make
+            req.body.make = removeExtraSpacingFromString(req.body.make);
+        }
+
+        // check if model was provided in request body
+        if (req.body.model !== null && req.body.model !== undefined) {
+            // verify model attribute value is valid
+            if (!isModelValid(req.body.model)) {
+                return res.status(HTTP_400_BAD_REQUEST)
+                    .set(CONTENT_TYPE, APPLICATION_JSON)
+                    .json({ 'Error': 'Model attribute is invalid' });
+            }
+
+            // format model
+            req.body.model = removeExtraSpacingFromString(req.body.model);
+        }
+
+        // verify wingspan attribute value is valid if it was provided in the request body
+        if (req.body.wingspan !== null && req.body.wingspan !== undefined && !isWingspanValid(req.body.wingspan)) {
+            return res.status(HTTP_400_BAD_REQUEST)
+                .set(CONTENT_TYPE, APPLICATION_JSON)
+                .json({ 'Error': 'Wingspan attribute is invalid' });
+        }
+
+        // fetch the aircraft that has the specified aircraftId
+        let aircraft = await fetchAircraftById(req.params.aircraftId);
+
+        // if aircraft is null then no aircraft with aircraftId exists
+        if (aircraft === null) {
+            return res.status(HTTP_404_NOT_FOUND)
+                .set(CONTENT_TYPE, APPLICATION_JSON)
+                .json({ 'Error': 'No aircraft with this aircraftId exists' });
+        }
+
+        // verify the requester owns the aircraft
+        if (aircraft.ownerId !== req.jwt.sub) {
+            return res.status(HTTP_403_FORBIDDEN)
+                .set(CONTENT_TYPE, APPLICATION_JSON)
+                .json({ 'Error': 'You are not authorized to perform this action' });
+        }
+
+        aircraft = await updateAircraft(req.params.aircraftId, req.body);
+
+        res.status(200)
             .set(CONTENT_TYPE, APPLICATION_JSON)
             .json(aircraft);
     } catch (err) {
