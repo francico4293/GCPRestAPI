@@ -45,6 +45,11 @@ const {
     HTTP_403_FORBIDDEN,
     HTTP_204_NO_CONTENT
 } = require('../constants/statusCodes');
+const { 
+    MAKE, 
+    MODEL, 
+    WINGSPAN 
+} = require('../constants/aircraftConstants');
 
 // instantiate new router object
 const router = express.Router();
@@ -328,8 +333,17 @@ router.patch('/:aircraftId', isJwtValid, async (req, res, next) => {
                 .json({ 'Error': 'You are not authorized to perform this action' });
         }
 
+        // prevent any invalid object keys from being included in update object
+        Object.keys(req.body).forEach(key => {
+            if (![ MAKE, MODEL, WINGSPAN ].includes(key)) {
+                delete req.body[key];
+            }
+        });
+
+        // update the aircraft
         aircraft = await updateAircraft(req.params.aircraftId, req.body);
 
+        // return status 200 and updated aircraft object
         res.status(200)
             .set(CONTENT_TYPE, APPLICATION_JSON)
             .json(aircraft);

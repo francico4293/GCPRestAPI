@@ -3,7 +3,12 @@
 // imports
 const { Datastore } = require('@google-cloud/datastore');
 const { AIRCRAFTS } = require('../constants/datastoreConstants');
-const { OWNER_ID } = require('../constants/aircraftConstants');
+const { 
+    OWNER_ID,
+    MAKE,
+    MODEL,
+    WINGSPAN
+} = require('../constants/aircraftConstants');
 const { EQUALS_SIGN } = require('../constants/commonConstants');
 const { RESULT_LIMIT } = require('../constants/datastoreConstants');
 
@@ -91,22 +96,27 @@ const fetchAircraftById = async (aircraftId) => {
  * Updates the attributes of the aircraft with aircraftId.
  * @param {string} aircraftId - The ID of the aircraft.
  * @param {object} updateObject - An object containing attributes that the aircraft will be updated with.
- * @returns - An object representing the update aircraft with id, make, model, wingspan, hangar, and ownerId 
+ * @returns - An object representing the updated aircraft with id, make, model, wingspan, hangar, and ownerId 
  *      attributes.
  */
 const updateAircraft = async (aircraftId, updateObject) => {
+    // create entity key used to fetch the aircraft with aircraftId
     const key = datastore.key([AIRCRAFTS, datastore.int(aircraftId)]);
 
+    // fetch the aircraft using the key
     const entity = await datastore.get(key);
 
+    // update aircraft attribute values provided in update object
     Object.keys(updateObject).forEach(key => {
         if (Object.keys(entity[0]).includes(key)) {
             entity[0][key] = updateObject[key];
         }
     });
 
+    // save updated aircraft
     await datastore.save(entity);
 
+    // return updated aircraft object
     return {
         id: parseInt(entity[0][Datastore.KEY].id),
         make: entity[0].make,

@@ -6,6 +6,12 @@ const {
     HANGARS, 
     RESULT_LIMIT 
 } = require('../constants/datastoreConstants');
+const { 
+    NAME,
+    CITY,
+    STATE,
+    CAPACITY
+} = require('../constants/hangarConstants');
 
 // create new datastore client
 const datastore = new Datastore();
@@ -105,6 +111,41 @@ const addAircraftToHangar = async (hangarId, aircraftId) => {
 }
 
 /**
+ * Updates the attributes of the hangar with hangarId.
+ * @param {string} hangarId - The ID of the hangar.
+ * @param {object} updateObject - An object containing attributes that the hangar will be updated with.
+ * @returns - An object representing the updated hangar with id, name, city, state, capacity, and aircrafts 
+ *      attributes.
+ */
+const updateHangar = async (hangarId, updateObject) => {
+    // generate entity key used to fetch the hangar with hangarId
+    const key = datastore.key([HANGARS, datastore.int(hangarId)]);
+
+    // fetch the hangar using the key
+    const entity = await datastore.get(key);
+
+    // update hangar attribute values using value in update object
+    Object.keys(updateObject).forEach(key => {
+        if (Object.keys(entity[0]).includes(key)) {
+            entity[0][key] = updateObject[key];
+        }
+    });
+
+    // save updated hangar
+    await datastore.save(entity);
+
+    // return updated hangar object
+    return {
+        id: parseInt(entity[0][Datastore.KEY].id),
+        name: entity[0].name,
+        city: entity[0].city,
+        state: entity[0].state,
+        capacity: entity[0].capacity,
+        aircrafts: entity[0].aircrafts
+    };
+}
+
+/**
  * Removes the aircraftId from the hangar entity with hangarId aircrafts array.
  * @param {string} hangarId - The ID of the hangar.
  * @param {string} aircraftId - The ID of the aircraft.
@@ -143,6 +184,7 @@ module.exports = {
     getQueryResultsForHangars,
     fetchHangarById,
     addAircraftToHangar,
+    updateHangar,
     removeAircraftFromHangar,
     deleteHangarById
 };

@@ -8,6 +8,7 @@ const {
     getQueryResultsForHangars,
     fetchHangarById,
     addAircraftToHangar,
+    updateHangar,
     deleteHangarById
 } = require('../models/hangarModel');
 const {
@@ -45,7 +46,13 @@ const {
     HTTP_204_NO_CONTENT,
     HTTP_403_FORBIDDEN
 } = require('../constants/statusCodes');
-const { NUMBER_OF_HANGARS } = require('../constants/hangarConstants');
+const { 
+    NUMBER_OF_HANGARS, 
+    NAME,
+    CITY,
+    STATE,
+    CAPACITY
+} = require('../constants/hangarConstants');
 
 // instantiate new router object
 const router = express.Router();
@@ -287,6 +294,105 @@ router.put('/:hangarId/aircrafts/:aircraftId', isJwtValid, async (req, res, next
 
         // return status 204
         res.status(HTTP_204_NO_CONTENT).send();
+    } catch (err) {
+        next(err);
+    }
+});
+
+router.patch('/:hangarId', async (req, res, next) => {
+    try {
+        // verify content-type in request body is application/json
+        if (!isReqHeaderValid(req.headers[CONTENT_TYPE], APPLICATION_JSON)) {
+            return res.status(HTTP_415_UNSUPPORTED_MEDIA_TYPE)
+                .set(CONTENT_TYPE, APPLICATION_JSON)
+                .json({ 'Error': 'This endpoint only accepts application/json' });
+        }
+
+        // verify accept header is */* or application/json
+        if (!isReqHeaderValid(req.headers.accept, APPLICATION_JSON, ANY_MIME_TYPE)) {
+            return res.status(HTTP_406_NOT_ACCEPTABLE)
+                .set(CONTENT_TYPE, APPLICATION_JSON)
+                .json({ 'Error': 'This endpoint only serves application/json' });
+        }
+
+        // fetch the hangar with hangarId
+        let hangar = await fetchHangarById(req.params.hangarId);
+
+        // if hangar is null then no hangar with hangarId exists
+        if (hangar === null) {
+            return res.status(HTTP_404_NOT_FOUND)
+                .set(CONTENT_TYPE, APPLICATION_JSON)
+                .json({ 'Error': 'No hangar with this hangarId exists' });
+        }
+
+        // check if name attribute was provided in request body
+        if (req.body.name !== null && req.body.name !== undefined) {
+            // verify that name attribute is valid
+            if (!isNameValid(req.body.name)) {
+                return res.status(HTTP_400_BAD_REQUEST)
+                    .set(CONTENT_TYPE, APPLICATION_JSON)
+                    .json({ "Error": "Name attribute is invalid" });
+            }
+
+            // format name
+            req.body.name = removeExtraSpacingFromString(req.body.name);
+        }
+        
+        // check if city attribute was provided in request body
+        if (req.body.city !== null && req.body.city !== undefined) {
+            // verify that city attribute is valid
+            if (!isCityValid(req.body.city)) {
+                return res.status(HTTP_400_BAD_REQUEST)
+                    .set(CONTENT_TYPE, APPLICATION_JSON)
+                    .json({ "Error": "City attribute is invalid" });
+            }
+
+            // format city
+            req.body.city = removeExtraSpacingFromString(req.body.city);
+        }
+
+        // check if state attribute was provided in request body
+        if (req.body.state !== null && req.body.state !== undefined) {
+            // verify that state attribute is valid
+            if (!isStateValid(req.body.state)) {
+                return res.status(HTTP_400_BAD_REQUEST)
+                    .set(CONTENT_TYPE, APPLICATION_JSON)
+                    .json({ "Error": "State attribute is invalid" });
+            }
+
+            // format state
+            req.body.state = removeExtraSpacingFromString(req.body.state);
+        }
+        
+        // verify that capacity attribute was provided in request body
+        if (req.body.capacity !== null && req.body.capacity !== undefined) {
+            // verify that capacity attribute is valid
+            if (!isCapacityValid(req.body.capacity)) {
+                return res.status(HTTP_400_BAD_REQUEST)
+                    .set(CONTENT_TYPE, APPLICATION_JSON)
+                    .json({ "Error": "Capacity attribute is invalid" });
+            }
+
+            // verify that capacity update will not make current aircrafts parked in the hangar invalid
+            if (req.body.capacity < hangar.aircrafts.length) {
+                return res.status(HTTP_400_BAD_REQUEST)
+                    .set(CONTENT_TYPE, APPLICATION_JSON)
+                    .json({ "Error": "Hangar capacity cannot be less than the current number of aircrafts in the hangar" });
+            }
+        }
+
+        // prevent any invalid object keys from being included in update object
+        Object.keys(req.body).forEach(key => {
+            if (![ NAME, CITY, STATE, CAPACITY ].includes(key)) {
+                delete req.body[key];
+            }
+        });
+
+        hangar = await updateHangar(req.params.hangarId, req.body);
+
+        res.status(200)
+            .set(CONTENT_TYPE, APPLICATION_JSON)
+            .json(hangar);
     } catch (err) {
         next(err);
     }
