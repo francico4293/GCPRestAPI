@@ -299,6 +299,10 @@ router.put('/:hangarId/aircrafts/:aircraftId', isJwtValid, async (req, res, next
     }
 });
 
+router.delete('/:hangarId/aircrafts/:aircraftId', isJwtValid, async (req, res, next) => {
+
+});
+
 router.patch('/:hangarId', async (req, res, next) => {
     try {
         // verify content-type in request body is application/json
@@ -388,7 +392,11 @@ router.patch('/:hangarId', async (req, res, next) => {
             }
         });
 
+        // update the hangar
         hangar = await updateHangar(req.params.hangarId, req.body);
+
+        // add self link to hangar object
+        hangar.self = createSelfLink(req.protocol, req.get(HOST), req.baseUrl, req.params.hangarId);
 
         res.status(200)
             .set(CONTENT_TYPE, APPLICATION_JSON)

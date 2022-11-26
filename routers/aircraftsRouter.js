@@ -343,6 +343,9 @@ router.patch('/:aircraftId', isJwtValid, async (req, res, next) => {
         // update the aircraft
         aircraft = await updateAircraft(req.params.aircraftId, req.body);
 
+        // add self link to aircraft
+        aircraft.self = createSelfLink(req.protocol, req.get(HOST), req.baseUrl, req.params.aircraftId);
+
         // return status 200 and updated aircraft object
         res.status(200)
             .set(CONTENT_TYPE, APPLICATION_JSON)
