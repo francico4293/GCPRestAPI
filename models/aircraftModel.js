@@ -3,12 +3,7 @@
 // imports
 const { Datastore } = require('@google-cloud/datastore');
 const { AIRCRAFTS } = require('../constants/datastoreConstants');
-const { 
-    OWNER_ID,
-    MAKE,
-    MODEL,
-    WINGSPAN
-} = require('../constants/aircraftConstants');
+const { OWNER_ID } = require('../constants/aircraftConstants');
 const { EQUALS_SIGN } = require('../constants/commonConstants');
 const { RESULT_LIMIT } = require('../constants/datastoreConstants');
 

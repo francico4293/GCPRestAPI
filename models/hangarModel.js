@@ -6,12 +6,6 @@ const {
     HANGARS, 
     RESULT_LIMIT 
 } = require('../constants/datastoreConstants');
-const { 
-    NAME,
-    CITY,
-    STATE,
-    CAPACITY
-} = require('../constants/hangarConstants');
 
 // create new datastore client
 const datastore = new Datastore();
