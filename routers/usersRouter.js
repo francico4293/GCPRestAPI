@@ -13,6 +13,8 @@ const {
 // instantiate new router object
 const router = express.Router();
 
+// TODO: Add count attribute for total number of users in collection!
+
 /**
  * Handler for GET /users endpoint. This endpoint is used to fetch all users currently signed up
  * for the application.

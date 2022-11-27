@@ -8,6 +8,7 @@ const {
     getQueryResultsForHangars,
     fetchHangarById,
     addAircraftToHangar,
+    removeAircraftFromHangar,
     updateHangar,
     deleteHangarById
 } = require('../models/hangarModel');
@@ -276,10 +277,11 @@ router.put('/:hangarId/aircrafts/:aircraftId', isJwtValid, async (req, res, next
         // verify that the requester is the owner of the aircraft
         if (aircraft.ownerId !== req.jwt.sub) {
             return res.status(HTTP_403_FORBIDDEN)
-                .set(CONTENT_TYPE, APPLICATION_JSON)
+                .set(CONTENT_TYPE, APPLICATION_JSON) 
                 .json({ 'Error': 'You are not authorized to perform this action' });
         }
 
+        // check if aircraft is already parked in a hangar
         if (aircraft.hangar !== null) {
             return res.status(HTTP_400_BAD_REQUEST)
                 .set(CONTENT_TYPE, APPLICATION_JSON)
@@ -300,7 +302,65 @@ router.put('/:hangarId/aircrafts/:aircraftId', isJwtValid, async (req, res, next
 });
 
 router.delete('/:hangarId/aircrafts/:aircraftId', isJwtValid, async (req, res, next) => {
+    try {
+        // if no jwt or an invalid jwt was provided return a 401 status code
+        if (req.jwt === null) {
+            return res.status(HTTP_401_UNAUTHORIZED)
+                .set(CONTENT_TYPE, APPLICATION_JSON)
+                .json({ "Error": "Bearer token is missing or invalid" });
+        }
 
+        // fetch the hangar with hangarId
+        let hangar = await fetchHangarById(req.params.hangarId);
+
+        // if hangar is null then no hangar with hangarId exists
+        if (hangar === null) {
+            return res.status(HTTP_404_NOT_FOUND)
+                .set(CONTENT_TYPE, APPLICATION_JSON)
+                .json({ 'Error': 'No hangar with this hangarId exists' });
+        }
+
+        // check if hangar contains any aircrafts
+        if (hangar.aircrafts.length === 0) {
+            return res.status(HTTP_400_BAD_REQUEST)
+                .set(CONTENT_TYPE, APPLICATION_JSON)
+                .json({ 'Error': 'This hangar is empty' });
+        }
+
+        // fetch the aircraft with aircraftId
+        let aircraft = await fetchAircraftById(req.params.aircraftId);
+
+        // if aircraft is null then no aircraft with aircraftId exists
+        if (aircraft === null) {
+            return res.status(HTTP_404_NOT_FOUND)
+                .set(CONTENT_TYPE, APPLICATION_JSON)
+                .json({ 'Error': 'No aircraft with this aircraftId exists' });
+        }
+
+        // verify that the requester is the owner of the aircraft
+        if (aircraft.ownerId !== req.jwt.sub) {
+            return res.status(HTTP_403_FORBIDDEN)
+                .set(CONTENT_TYPE, APPLICATION_JSON) 
+                .json({ 'Error': 'You are not authorized to perform this action' });
+        }
+
+        // verify that aircraft is parked at this hangar
+        if (aircraft.hangar !== req.params.hangarId) {
+            return res.status(HTTP_400_BAD_REQUEST)
+                .set(CONTENT_TYPE, APPLICATION_JSON)
+                .json({ 'Error': 'This aircraft is not parked at this hangar' });
+        }
+
+        await removeAircraftFromHangar(req.params.hangarId, req.params.aircraftId);
+
+        // makr aircraft as "in flight"
+        aircraft = await updateAircraft(req.params.aircraftId, { hangar: null });
+
+        // return status 204
+        res.status(HTTP_204_NO_CONTENT).send();
+    } catch (err) {
+        next(err);
+    }
 });
 
 router.patch('/:hangarId', async (req, res, next) => {
