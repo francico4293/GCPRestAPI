@@ -474,6 +474,97 @@ router.patch('/:hangarId', async (req, res, next) => {
     }
 });
 
+router.put('/:hangarId', async (req, res, next) => {
+    try {
+        // verify content-type in request body is application/json
+        if (!isReqHeaderValid(req.headers[CONTENT_TYPE], APPLICATION_JSON)) {
+            return res.status(HTTP_415_UNSUPPORTED_MEDIA_TYPE)
+                .set(CONTENT_TYPE, APPLICATION_JSON)
+                .json({ 'Error': 'This endpoint only accepts application/json' });
+        }
+
+        // verify accept header is */* or application/json
+        if (!isReqHeaderValid(req.headers.accept, APPLICATION_JSON, ANY_MIME_TYPE)) {
+            return res.status(HTTP_406_NOT_ACCEPTABLE)
+                .set(CONTENT_TYPE, APPLICATION_JSON)
+                .json({ 'Error': 'This endpoint only serves application/json' });
+        }
+
+        // verify that name attribute is valid
+        if (!isNameValid(req.body.name)) {
+            return res.status(HTTP_400_BAD_REQUEST)
+                .set(CONTENT_TYPE, APPLICATION_JSON)
+                .json({ "Error": "Name attribute is missing or invalid" });
+        }
+
+        // format name
+        req.body.name = removeExtraSpacingFromString(req.body.name);
+
+        // verify that city attribute is valid
+        if (!isCityValid(req.body.city)) {
+            return res.status(HTTP_400_BAD_REQUEST)
+                .set(CONTENT_TYPE, APPLICATION_JSON)
+                .json({ "Error": "City attribute is missing or invalid" });
+        }
+
+        // format city
+        req.body.city = removeExtraSpacingFromString(req.body.city);
+
+        // verify that state attribute is valid
+        if (!isStateValid(req.body.state)) {
+            return res.status(HTTP_400_BAD_REQUEST)
+                .set(CONTENT_TYPE, APPLICATION_JSON)
+                .json({ "Error": "State attribute is missing or invalid" });
+        }
+
+        // format state
+        req.body.state = removeExtraSpacingFromString(req.body.state);
+
+        // verify that capacity attribute is valid
+        if (!isCapacityValid(req.body.capacity)) {
+            return res.status(HTTP_400_BAD_REQUEST)
+                .set(CONTENT_TYPE, APPLICATION_JSON)
+                .json({ "Error": "Capacity attribute is missing or invalid" });
+        }
+
+        // fetch the hangar with hangarId
+        let hangar = await fetchHangarById(req.params.hangarId);
+
+        // if hangar is null then no hangar with hangarId exists
+        if (hangar === null) {
+            return res.status(HTTP_404_NOT_FOUND)
+                .set(CONTENT_TYPE, APPLICATION_JSON)
+                .json({ 'Error': 'No hangar with this hangarId exists' });
+        }
+
+        // verify that capacity update will not make current aircrafts parked in the hangar invalid
+        if (req.body.capacity < hangar.aircrafts.length) {
+            return res.status(HTTP_400_BAD_REQUEST)
+                .set(CONTENT_TYPE, APPLICATION_JSON)
+                .json({ "Error": "Hangar capacity cannot be less than the current number of aircrafts in the hangar" });
+        }
+
+        // prevent any invalid object keys from being included in update object
+        Object.keys(req.body).forEach(key => {
+            if (![ NAME, CITY, STATE, CAPACITY ].includes(key)) {
+                delete req.body[key];
+            }
+        });
+
+        // update the hangar
+        hangar = await updateHangar(req.params.hangarId, req.body);
+
+        // add self link to hangar object
+        hangar.self = createSelfLink(req.protocol, req.get(HOST), req.baseUrl, req.params.hangarId);
+
+        res.status(200)
+            .set(CONTENT_TYPE, APPLICATION_JSON)
+            .json(hangar);
+    } catch (err) {
+        next(err);
+    }
+});
+
 /**
  * Handler for DELETE /hangars/:hangarId endpoint. This endpoint is used to delete the hangar with
  * the hangarId provided as a request parameter. If the hangar being deleted has any aircrafts parked
