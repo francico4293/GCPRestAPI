@@ -301,6 +301,10 @@ router.put('/:hangarId/aircrafts/:aircraftId', isJwtValid, async (req, res, next
     }
 });
 
+/**
+ * Handler for DELETE /hangars/:hangarId/aircrafts/:aircraftId endpoint. This endpoint allows the owner of an aircraft
+ * to remove the aircraft from a hangar that it is parked in.
+ */
 router.delete('/:hangarId/aircrafts/:aircraftId', isJwtValid, async (req, res, next) => {
     try {
         // if no jwt or an invalid jwt was provided return a 401 status code
@@ -363,6 +367,10 @@ router.delete('/:hangarId/aircrafts/:aircraftId', isJwtValid, async (req, res, n
     }
 });
 
+/**
+ * Handler for PATCH /hangars/:hangarId endpoint. This endpoint allows a user to partially update the
+ * attributes of an existing hangar.
+ */
 router.patch('/:hangarId', async (req, res, next) => {
     try {
         // verify content-type in request body is application/json

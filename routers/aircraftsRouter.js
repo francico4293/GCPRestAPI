@@ -258,7 +258,8 @@ router.get('/:aircraftId', isJwtValid, async (req, res, next) => {
 });
 
 /**
- * 
+ * Handler for PATCH /aircrafts/:aircraftId endpoint. This endpoint allows user to partially update the
+ * attributes of an existing aircraft.
  */
 router.patch('/:aircraftId', isJwtValid, async (req, res, next) => {
     try {
