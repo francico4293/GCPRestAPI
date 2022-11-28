@@ -163,7 +163,7 @@ router.get('/', isJwtValid, async (req, res, next) => {
         const numberOfUserAircrafts = await fetchNumberOfUserAircrafts(req.jwt.sub);
 
         // initialize object to send in response body
-        const responseJson = { count: numberOfUserAircrafts, aircrafts: [] };
+        const responseJson = { totalAircrafts: numberOfUserAircrafts, aircrafts: [] };
 
         // populate aircrafts array in responseJson object with query results
         queryResults[0].forEach(result => {

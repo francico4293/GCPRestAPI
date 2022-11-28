@@ -163,7 +163,7 @@ router.get('/', async (req, res, next) => {
         const queryResults = await getQueryResultsForHangars(req.query.cursor);
 
         // initialize object to send in response body
-        const responseJson = { count: req.app.get(NUMBER_OF_HANGARS), hangars: [] };
+        const responseJson = { totalHangars: req.app.get(NUMBER_OF_HANGARS), hangars: [] };
 
         // populate hangars array in responseJson with hangars from query results
         queryResults[0].forEach(result => {
