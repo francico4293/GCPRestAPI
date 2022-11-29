@@ -14,6 +14,12 @@ const CONTENT_TYPE = 'content-type';
 
 const ANY_MIME_TYPE = '*/*';
 
+const ALLOW = 'Allow';
+
+const GET = 'GET';
+
+const POST = 'POST';
+
 module.exports = { 
     PUBLIC,
     HOST,
@@ -21,5 +27,8 @@ module.exports = {
     TRUST_PROXY,
     APPLICATION_JSON, 
     CONTENT_TYPE, 
-    ANY_MIME_TYPE
+    ANY_MIME_TYPE,
+    ALLOW,
+    GET,
+    POST
 };

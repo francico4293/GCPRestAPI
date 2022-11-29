@@ -30,7 +30,10 @@ const { removeExtraSpacingFromString } = require('../utilities/formattingUtils')
 const { 
     CONTENT_TYPE, 
     APPLICATION_JSON, 
-    ANY_MIME_TYPE 
+    ANY_MIME_TYPE,
+    ALLOW,
+    GET,
+    POST
 } = require('../constants/serverConstants');
 const { MORE_RESULTS_AFTER_LIMIT } = require('../constants/datastoreConstants');
 const { HOST } = require('../constants/serverConstants');
@@ -43,7 +46,8 @@ const {
     HTTP_401_UNAUTHORIZED,
     HTTP_404_NOT_FOUND,
     HTTP_403_FORBIDDEN,
-    HTTP_204_NO_CONTENT
+    HTTP_204_NO_CONTENT,
+    HTTP_405_METHOD_NOT_ALLOWED
 } = require('../constants/statusCodes');
 const { 
     MAKE, 
@@ -258,8 +262,8 @@ router.get('/:aircraftId', isJwtValid, async (req, res, next) => {
 });
 
 /**
- * Handler for PATCH /aircrafts/:aircraftId endpoint. This endpoint allows user to partially update the
- * attributes of an existing aircraft.
+ * Handler for PATCH /aircrafts/:aircraftId endpoint. This endpoint allows a user to partially update the
+ * attributes of an existing aircraft that they own.
  */
 router.patch('/:aircraftId', isJwtValid, async (req, res, next) => {
     try {
@@ -356,6 +360,10 @@ router.patch('/:aircraftId', isJwtValid, async (req, res, next) => {
     }
 });
 
+/**
+ * Handler for PUT /aicrafts/:aircraftId endpoint. This endpoint allows a user to fully update the
+ * attributes of an existing aircraft that they own.
+ */
 router.put('/:aircraftId', isJwtValid, async (req, res, next) => {
     try {
         // if no jwt or an invalid jwt was provided return a 401 status code
@@ -493,8 +501,43 @@ router.delete('/:aircraftId', isJwtValid, async (req, res, next) => {
     }
 });
 
-router.delete('/', async (req, res) => {
-    // invalid action
+/**
+ * Handler for PUT /aircrafts endpoint. Fully updating all aircrafts is not allowed.
+ */
+router.put('/', (req, res, next) => {
+    try {
+        res.status(HTTP_405_METHOD_NOT_ALLOWED)
+            .set(ALLOW, `${GET}, ${POST}`)
+            .json({ 'Error': 'Updating all aircrafts is not allowed' });
+    } catch (err) {
+        next(err);
+    }
+});
+
+/**
+ * Handler for PATCH /aircrafts endpoint. Partially updating all aircrafts is not allowed.
+ */
+router.patch('/', (req, res, next) => {
+    try {
+        res.status(HTTP_405_METHOD_NOT_ALLOWED)
+            .set(ALLOW, `${GET}, ${POST}`)
+            .json({ 'Error': 'Updating all aircrafts is not allowed' });
+    } catch (err) {
+        next(err);
+    }
+});
+
+/**
+ * Handler DELETE /aircrafts endpoint. Deleting all aircrafts is not allowed.
+ */
+router.delete('/', (req, res, next) => {
+    try {
+        res.status(HTTP_405_METHOD_NOT_ALLOWED)
+            .set(ALLOW, `${GET}, ${POST}`)
+            .json({ 'Error': 'Deleting all aircrafts is not allowed' });
+    } catch (err) {
+        next(err);
+    }
 });
 
 // exports

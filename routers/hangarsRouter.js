@@ -45,7 +45,8 @@ const {
     HTTP_404_NOT_FOUND,
     HTTP_401_UNAUTHORIZED,
     HTTP_204_NO_CONTENT,
-    HTTP_403_FORBIDDEN
+    HTTP_403_FORBIDDEN,
+    HTTP_405_METHOD_NOT_ALLOWED
 } = require('../constants/statusCodes');
 const { 
     NUMBER_OF_HANGARS, 
@@ -474,6 +475,10 @@ router.patch('/:hangarId', async (req, res, next) => {
     }
 });
 
+/**
+ * Handler for PUT /hangars/:hangarId endpoint. This endpoint allows a user to fully update the
+ * attributes of an existing hangar.
+ */
 router.put('/:hangarId', async (req, res, next) => {
     try {
         // verify content-type in request body is application/json
@@ -595,6 +600,45 @@ router.delete('/:hangarId', async (req, res, next) => {
 
         // return status 204
         res.status(204).send();
+    } catch (err) {
+        next(err);
+    }
+});
+
+/**
+ * Handler for PUT /hangars endpoint. Fully updating all hangars is not allowed.
+ */
+router.put('/', (req, res, next) => {
+    try {
+        res.status(HTTP_405_METHOD_NOT_ALLOWED)
+            .set(ALLOW, `${GET}, ${POST}`)
+            .json({ 'Error': 'Updating all hangars is not allowed' });
+    } catch (err) {
+        next(err);
+    }
+});
+
+/**
+ * Handler for PATCH /aircrafts endpoint. Partially updating all aircrafts is not allowed.
+ */
+router.patch('/', (req, res, next) => {
+    try {
+        res.status(HTTP_405_METHOD_NOT_ALLOWED)
+            .set(ALLOW, `${GET}, ${POST}`)
+            .json({ 'Error': 'Updating all hangars is not allowed' });
+    } catch (err) {
+        next(err);
+    }
+});
+
+/**
+ * Handler for DELETE /aircrafts endpoint. Deleting all aircrafts is not allowed.
+ */
+router.delete('/', (req, res, next) => {
+    try {
+        res.status(HTTP_405_METHOD_NOT_ALLOWED)
+            .set(ALLOW, `${GET}, ${POST}`)
+            .json({ 'Error': 'Updating all hangars is not allowed' });
     } catch (err) {
         next(err);
     }
