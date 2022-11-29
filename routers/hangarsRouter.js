@@ -33,7 +33,10 @@ const {
     CONTENT_TYPE,
     APPLICATION_JSON, 
     ANY_MIME_TYPE,
-    HOST 
+    HOST,
+    ALLOW,
+    GET,
+    POST
 } = require('../constants/serverConstants');
 const { MORE_RESULTS_AFTER_LIMIT } = require('../constants/datastoreConstants');
 const {
@@ -638,7 +641,7 @@ router.delete('/', (req, res, next) => {
     try {
         res.status(HTTP_405_METHOD_NOT_ALLOWED)
             .set(ALLOW, `${GET}, ${POST}`)
-            .json({ 'Error': 'Updating all hangars is not allowed' });
+            .json({ 'Error': 'Deleting all hangars is not allowed' });
     } catch (err) {
         next(err);
     }
