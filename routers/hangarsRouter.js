@@ -470,6 +470,7 @@ router.patch('/:hangarId', async (req, res, next) => {
         // add self link to hangar object
         hangar.self = createSelfLink(req.protocol, req.get(HOST), req.baseUrl, req.params.hangarId);
 
+        // return status 200 and updated hangar
         res.status(200)
             .set(CONTENT_TYPE, APPLICATION_JSON)
             .json(hangar);
