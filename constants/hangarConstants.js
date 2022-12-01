@@ -10,8 +10,6 @@ const HANGAR_STATE_REGEX = /^[A-Za-z ]+$/;
 
 const HANGAR_CITY_REGEX = /^[A-Za-z .,]+$/;
 
-const NUMBER_OF_HANGARS = 'NUMBER_OF_HANGARS';
-
 const NAME = 'name';
 
 const CITY = 'city';
@@ -26,7 +24,6 @@ module.exports = {
     HANGAR_NAME_REGEX,
     HANGAR_CITY_REGEX,
     HANGAR_STATE_REGEX,
-    NUMBER_OF_HANGARS,
     NAME,
     CITY,
     STATE,

@@ -72,6 +72,21 @@ const getQueryResultsForHangars = async (cursor) => {
 }
 
 /**
+ * Determines the total number of hangars.
+ * @returns - The total number of hangars.
+ */
+const getTotalHangarsCount = async () => {
+    // create query to fetch all hangars in Datastore Hangars kind
+    const query = datastore.createQuery(HANGARS);
+
+    // run query and capture results
+    const queryResults = await datastore.runQuery(query);
+
+    // return number of hangars in query results
+    return queryResults[0].length;
+}
+
+/**
  * Retrieves the hangar entity with hangarId from the Datastore Hangars kind.
  * @param {string} hangarId - The ID of the hangar.
  * @returns - A hangar object with id, name, city, state, capacity, and aircrafts attributes.
@@ -191,6 +206,7 @@ const deleteHangarById = async (hangarId) => {
 module.exports = { 
     createHangar, 
     getQueryResultsForHangars,
+    getTotalHangarsCount,
     fetchHangarById,
     addAircraftToHangar,
     updateHangar,

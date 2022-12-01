@@ -15,8 +15,7 @@ const { isReqHeaderValid } = require('../utilities/serverUtils');
 const { 
     CONTENT_TYPE, 
     APPLICATION_JSON
-} = require('../constants/serverConstants'); 
-const { NUMBER_OF_USERS } = require('../constants/usersConstants');
+} = require('../constants/serverConstants');
 
 // instantiate new router object
 const router = express.Router();
@@ -42,7 +41,7 @@ router.get('/', async (req, res, next) => {
             .set(CONTENT_TYPE, APPLICATION_JSON)
             .json(
                 {
-                    totalUsers: req.app.get(NUMBER_OF_USERS),
+                    totalUsers: users.length,
                     users
                 }
             );

@@ -14,6 +14,7 @@ const { Datastore } = require('@google-cloud/datastore');
 const { 
     createHangar, 
     getQueryResultsForHangars,
+    getTotalHangarsCount,
     fetchHangarById,
     addAircraftToHangar,
     removeAircraftFromHangar,
@@ -59,7 +60,6 @@ const {
     HTTP_405_METHOD_NOT_ALLOWED
 } = require('../constants/statusCodes');
 const { 
-    NUMBER_OF_HANGARS, 
     NAME,
     CITY,
     STATE,
@@ -135,9 +135,6 @@ router.post('/', async (req, res, next) => {
             req.body.capacity
         );
 
-        // increment number of hangars
-        req.app.set(NUMBER_OF_HANGARS, req.app.get(NUMBER_OF_HANGARS) + 1);
-
         // return status 201 and newly created hangar object
         res.status(HTTP_201_CREATED)
             .set(CONTENT_TYPE, APPLICATION_JSON)
@@ -173,8 +170,11 @@ router.get('/', async (req, res, next) => {
         // get raw query results for all hangars
         const queryResults = await getQueryResultsForHangars(req.query.cursor);
 
+        // get total number of hangars
+        const totalHangars = await getTotalHangarsCount();
+
         // initialize object to send in response body
-        const responseJson = { totalHangars: req.app.get(NUMBER_OF_HANGARS), hangars: [] };
+        const responseJson = { totalHangars, hangars: [] };
 
         // populate hangars array in responseJson with hangars from query results
         queryResults[0].forEach(result => {
@@ -611,9 +611,6 @@ router.delete('/:hangarId', async (req, res, next) => {
 
         // delete the hangar
         await deleteHangarById(req.params.hangarId);
-
-        // decrement number of hangars
-        req.app.set(NUMBER_OF_HANGARS, req.app.get(NUMBER_OF_HANGARS) - 1);
 
         // mark each aircraft in hangar as being "in flight"
         for (let aircraft of hangar.aircrafts) {
