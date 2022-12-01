@@ -59,7 +59,7 @@ const fetchUser = async (userId) => {
 
     // return user object
     return {
-        id: parseInt(user[0][Datastore.KEY].name),
+        id: user[0][Datastore.KEY].name,
         givenName: user[0].givenName,
         familyName: user[0].familyName,
         aircrafts: user[0].aircrafts
@@ -80,7 +80,7 @@ const fetchAllUsers = async () => {
     // return an array of user objects
     return queryResults[0].map(result => (
         { 
-            id: parseInt(result[Datastore.KEY].name),  
+            id: result[Datastore.KEY].name,  
             givenName: result.givenName,
             familyName: result.familyName,
             aircrafts: result.aircrafts

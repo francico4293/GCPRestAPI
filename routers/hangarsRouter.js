@@ -80,7 +80,7 @@ router.post('/', async (req, res, next) => {
         if (!isReqHeaderValid(req.headers[CONTENT_TYPE], APPLICATION_JSON)) {
             return res.status(HTTP_415_UNSUPPORTED_MEDIA_TYPE)
                 .set(CONTENT_TYPE, APPLICATION_JSON)
-                .json({ 'Error': 'Content-type must be application/json' });
+                .json({ 'Error': 'Content-Type must be application/json' });
         }
 
         // verify accept header is application/json
@@ -399,7 +399,7 @@ router.patch('/:hangarId', async (req, res, next) => {
         if (!isReqHeaderValid(req.headers[CONTENT_TYPE], APPLICATION_JSON)) {
             return res.status(HTTP_415_UNSUPPORTED_MEDIA_TYPE)
                 .set(CONTENT_TYPE, APPLICATION_JSON)
-                .json({ 'Error': 'Content-type must be application/json' });
+                .json({ 'Error': 'Content-Type must be application/json' });
         }
 
         // verify accept header is application/json
@@ -507,7 +507,7 @@ router.put('/:hangarId', async (req, res, next) => {
         if (!isReqHeaderValid(req.headers[CONTENT_TYPE], APPLICATION_JSON)) {
             return res.status(HTTP_415_UNSUPPORTED_MEDIA_TYPE)
                 .set(CONTENT_TYPE, APPLICATION_JSON)
-                .json({ 'Error': 'Content-type must be application/json' });
+                .json({ 'Error': 'Content-Type must be application/json' });
         }
 
         // verify accept header is application/json
