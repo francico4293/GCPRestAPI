@@ -31,7 +31,7 @@ router.get('/', async (req, res, next) => {
         if (!isReqHeaderValid(req.headers.accept, APPLICATION_JSON)) {
             return res.status(406)
                 .set(CONTENT_TYPE, APPLICATION_JSON)
-                .json({ 'Error': 'This endpoint only serves application/json' });
+                .json({ 'Error': 'Accept header must be application/json' });
         }
 
         // fetch all users from datastore

@@ -80,14 +80,14 @@ router.post('/', async (req, res, next) => {
         if (!isReqHeaderValid(req.headers[CONTENT_TYPE], APPLICATION_JSON)) {
             return res.status(HTTP_415_UNSUPPORTED_MEDIA_TYPE)
                 .set(CONTENT_TYPE, APPLICATION_JSON)
-                .json({ 'Error': 'This endpoint only accepts application/json' });
+                .json({ 'Error': 'Content-type must be application/json' });
         }
 
         // verify accept header is application/json
         if (!isReqHeaderValid(req.headers.accept, APPLICATION_JSON)) {
             return res.status(HTTP_406_NOT_ACCEPTABLE)
                 .set(CONTENT_TYPE, APPLICATION_JSON)
-                .json({ 'Error': 'This endpoint only serves application/json' });
+                .json({ 'Error': 'Accept header must be application/json' });
         }
 
         // verify that name attribute is valid
@@ -167,7 +167,7 @@ router.get('/', async (req, res, next) => {
         if (!isReqHeaderValid(req.headers.accept, APPLICATION_JSON)) {
             return res.status(HTTP_406_NOT_ACCEPTABLE)
                 .set(CONTENT_TYPE, APPLICATION_JSON)
-                .json({ 'Error': 'This endpoint only serves application/json' });
+                .json({ 'Error': 'Accept header must be application/json' });
         }
 
         // get raw query results for all hangars
@@ -227,7 +227,7 @@ router.get('/:hangarId', async (req, res, next) => {
         if (!isReqHeaderValid(req.headers.accept, APPLICATION_JSON)) {
             return res.status(HTTP_406_NOT_ACCEPTABLE)
                 .set(CONTENT_TYPE, APPLICATION_JSON)
-                .json({ 'Error': 'This endpoint only serves application/json' });
+                .json({ 'Error': 'Accept header must be application/json' });
         }
         
         // fetch the hangar with hangarId
@@ -399,14 +399,14 @@ router.patch('/:hangarId', async (req, res, next) => {
         if (!isReqHeaderValid(req.headers[CONTENT_TYPE], APPLICATION_JSON)) {
             return res.status(HTTP_415_UNSUPPORTED_MEDIA_TYPE)
                 .set(CONTENT_TYPE, APPLICATION_JSON)
-                .json({ 'Error': 'This endpoint only accepts application/json' });
+                .json({ 'Error': 'Content-type must be application/json' });
         }
 
         // verify accept header is application/json
         if (!isReqHeaderValid(req.headers.accept, APPLICATION_JSON)) {
             return res.status(HTTP_406_NOT_ACCEPTABLE)
                 .set(CONTENT_TYPE, APPLICATION_JSON)
-                .json({ 'Error': 'This endpoint only serves application/json' });
+                .json({ 'Error': 'Accept header must be application/json' });
         }
 
         // fetch the hangar with hangarId
@@ -507,14 +507,14 @@ router.put('/:hangarId', async (req, res, next) => {
         if (!isReqHeaderValid(req.headers[CONTENT_TYPE], APPLICATION_JSON)) {
             return res.status(HTTP_415_UNSUPPORTED_MEDIA_TYPE)
                 .set(CONTENT_TYPE, APPLICATION_JSON)
-                .json({ 'Error': 'This endpoint only accepts application/json' });
+                .json({ 'Error': 'Content-type must be application/json' });
         }
 
         // verify accept header is application/json
         if (!isReqHeaderValid(req.headers.accept, APPLICATION_JSON)) {
             return res.status(HTTP_406_NOT_ACCEPTABLE)
                 .set(CONTENT_TYPE, APPLICATION_JSON)
-                .json({ 'Error': 'This endpoint only serves application/json' });
+                .json({ 'Error': 'Accept header must be application/json' });
         }
 
         // verify that name attribute is valid
