@@ -1,5 +1,19 @@
 'use strict';
 
+// ***** GENERAL CODE CITATION / REFERENCE *****
+// SOURCE: https://canvas.oregonstate.edu/courses/1890665/pages/exploration-google-app-engine-and-node-dot-js?module_item_id=22486453
+// SOURCE: https://canvas.oregonstate.edu/courses/1890665/pages/exploration-intermediate-rest-api-features-with-node-dot-js?module_item_id=22486462
+// AUTHOR: Oregon State University
+// DESCRIPTION: While developing the below functions, I referenced the above sources. These sources were explorations presented
+//      throughout the duration of the CS493 course.
+
+// ***** GENERAL CODE CITATION / REFERENCE *****
+// SOURCE: https://github.com/francico4293/CS493-Assignment4/tree/main/models
+// SOURCE: https://github.com/francico4293/CS493-Assignment5/tree/main/models
+// AUTHOR: Colin Francis
+// DESCRIPTION: While developing the below functions, I referenced my previous assignment submissions that were submitted this quarter for CS493. 
+//      Source code can be provided upon request.
+
 // imports
 const { Datastore } = require('@google-cloud/datastore');
 const { STATES } = require('../constants/datastoreConstants');

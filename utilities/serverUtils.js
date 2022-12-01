@@ -1,5 +1,13 @@
 'use strict';
 
+// ***** GENERAL CODE CITATION / REFERENCE *****
+// SOURCE: https://github.com/francico4293/CS493-Assignment5/blob/main/utilities/utils.js
+// AUTHOR: Colin Francis
+// DESCRIPTION: isReqHeaderValid and createSelfLink functions were functions I created as part
+//      of my assignment 5 submission for CS493 this quarter. I referenced my code written for
+//      those functions in assignment 5 while working on them for this assignment. Source code
+//      is available upon request
+
 // imports
 const { 
     HOST, 

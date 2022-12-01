@@ -1,5 +1,13 @@
 'use strict';
 
+// ***** GENERAL CODE CITATION / REFERENCE *****
+// SOURCE: https://github.com/francico4293/CS493-Assignment4/tree/main/routers
+// SOURCE: https://github.com/francico4293/CS493-Assignment5/tree/main/routers
+// AUTHOR: Colin Francis
+// DESCRIPTION: I referenced code I wrote in the above sources while developing the endpoints below.
+//      These sources were assignments previously submitted this quarter for CS493. Source code is 
+//      available upon request.
+
 // imports
 const express = require('express');
 const { Datastore } = require('@google-cloud/datastore');
@@ -189,11 +197,22 @@ router.get('/', isJwtValid, async (req, res, next) => {
             );
         });
         
+        // ***** BEGIN CODE CITATION *****
+        // The following code is not my own / was developed while heavily referencing the following source.
+        // SOURCE: https://canvas.oregonstate.edu/courses/1890665/pages/exploration-intermediate-rest-api-features-with-node-dot-js?module_item_id=22486462
+        // AUTHOR: Oregon State University
+        // The following code checks the raw query result returned by Google Datastore to see if the moreResults attribute is equal to
+        // the string 'MORE_RESULTS_AFTER_LIMIT'. If this is the case, then this means that a cursor exists as part of the raw query results
+        // since there are more results that can be retrieved from Google Datastore. If the condition is true, then the cursor value is added
+        // to a root URL as a query parameter and this full URL is added to the response body as the attribute "next". This can then be used
+        // for pagination.
+
         // if more results remain in datastore, add cursor in responseJson object 
         if (queryResults[1].moreResults === MORE_RESULTS_AFTER_LIMIT) {
             responseJson.next = `${req.protocol}://${req.get(HOST)}${req.baseUrl}?` + 
                 `cursor=${encodeURIComponent(queryResults[1].endCursor)}`;
         }
+        // ***** END CODE CITATION *****
 
         // return responseJson with status 200
         res.status(HTTP_200_OK)

@@ -1,5 +1,17 @@
 'use strict';
 
+// ***** GENERAL CODE CITATION / REFERENCE *****
+// SOURCE: https://github.com/francico4293/CS493-Assignment6/blob/main/server.js
+// AUTHOR: Colin Francis
+// DESCRIPTION: I referenced the above sources while developing the endpoints below. The sources were
+//      assignments previously submitted this quarter for CS493. Source codeis available upon request.
+
+
+// ***** GENERAL CODE CITATION / REFERENCE *****
+// SOURCE: https://developers.google.com/identity/protocols/oauth2/web-server
+// Author: Google
+// This documentation provided at the URL above was used as a guide in creating the application.
+
 // imports
 const express = require('express');
 const { isProd } = require('../utilities/serverUtils');

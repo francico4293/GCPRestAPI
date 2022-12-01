@@ -1,5 +1,11 @@
 'use strict';
 
+// ***** GENERAL CODE CITATION / REFERENCE *****
+// SOURCE: https://github.com/francico4293/CS493-Assignment5/blob/main/utilities/utils.js
+// AUTHOR: Colin Francis
+// DESCRIPTION: The above source as part of my submission for assignment 5 for CS493 this quarter was referenced while the
+//      functions below were written. Source code is available upon request.
+
 // imports
 const { createSelfLink } = require('../utilities/serverUtils');
 const { 

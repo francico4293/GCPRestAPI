@@ -1,5 +1,13 @@
 'use strict';
 
+// ***** GENERAL CODE CITATION / REFERENCE *****
+// SOURCE: https://github.com/francico4293/CS493-Assignment4/tree/main/routers
+// SOURCE: https://github.com/francico4293/CS493-Assignment5/tree/main/routers
+// AUTHOR: Colin Francis
+// DESCRIPTION: I referenced code I wrote in the above sources while developing the endpoints below.
+//      These sources were assignments previously submitted this quarter for CS493. Source code is 
+//      available upon request.
+
 // imports
 const express = require('express');
 const { fetchAllUsers } = require('../models/userModel');
