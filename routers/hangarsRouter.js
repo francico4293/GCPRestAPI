@@ -39,8 +39,7 @@ const {
 const { isJwtValid } = require('../middleware/authMiddleware');
 const { 
     CONTENT_TYPE,
-    APPLICATION_JSON, 
-    ANY_MIME_TYPE,
+    APPLICATION_JSON,
     HOST,
     ALLOW,
     GET,
@@ -84,8 +83,8 @@ router.post('/', async (req, res, next) => {
                 .json({ 'Error': 'This endpoint only accepts application/json' });
         }
 
-        // verify accept header is */* or application/json
-        if (!isReqHeaderValid(req.headers.accept, APPLICATION_JSON, ANY_MIME_TYPE)) {
+        // verify accept header is application/json
+        if (!isReqHeaderValid(req.headers.accept, APPLICATION_JSON)) {
             return res.status(HTTP_406_NOT_ACCEPTABLE)
                 .set(CONTENT_TYPE, APPLICATION_JSON)
                 .json({ 'Error': 'This endpoint only serves application/json' });
@@ -164,8 +163,8 @@ router.post('/', async (req, res, next) => {
  */
 router.get('/', async (req, res, next) => {
     try {
-        // verify accept header is */* or application/json
-        if (!isReqHeaderValid(req.headers.accept, APPLICATION_JSON, ANY_MIME_TYPE)) {
+        // verify accept header is application/json
+        if (!isReqHeaderValid(req.headers.accept, APPLICATION_JSON)) {
             return res.status(HTTP_406_NOT_ACCEPTABLE)
                 .set(CONTENT_TYPE, APPLICATION_JSON)
                 .json({ 'Error': 'This endpoint only serves application/json' });
@@ -224,8 +223,8 @@ router.get('/', async (req, res, next) => {
  */
 router.get('/:hangarId', async (req, res, next) => {
     try {
-        // verify accept header is */* or application/json
-        if (!isReqHeaderValid(req.headers.accept, APPLICATION_JSON, ANY_MIME_TYPE)) {
+        // verify accept header is application/json
+        if (!isReqHeaderValid(req.headers.accept, APPLICATION_JSON)) {
             return res.status(HTTP_406_NOT_ACCEPTABLE)
                 .set(CONTENT_TYPE, APPLICATION_JSON)
                 .json({ 'Error': 'This endpoint only serves application/json' });
@@ -403,8 +402,8 @@ router.patch('/:hangarId', async (req, res, next) => {
                 .json({ 'Error': 'This endpoint only accepts application/json' });
         }
 
-        // verify accept header is */* or application/json
-        if (!isReqHeaderValid(req.headers.accept, APPLICATION_JSON, ANY_MIME_TYPE)) {
+        // verify accept header is application/json
+        if (!isReqHeaderValid(req.headers.accept, APPLICATION_JSON)) {
             return res.status(HTTP_406_NOT_ACCEPTABLE)
                 .set(CONTENT_TYPE, APPLICATION_JSON)
                 .json({ 'Error': 'This endpoint only serves application/json' });
@@ -511,8 +510,8 @@ router.put('/:hangarId', async (req, res, next) => {
                 .json({ 'Error': 'This endpoint only accepts application/json' });
         }
 
-        // verify accept header is */* or application/json
-        if (!isReqHeaderValid(req.headers.accept, APPLICATION_JSON, ANY_MIME_TYPE)) {
+        // verify accept header is application/json
+        if (!isReqHeaderValid(req.headers.accept, APPLICATION_JSON)) {
             return res.status(HTTP_406_NOT_ACCEPTABLE)
                 .set(CONTENT_TYPE, APPLICATION_JSON)
                 .json({ 'Error': 'This endpoint only serves application/json' });

@@ -18,6 +18,7 @@ const {
     TRUST_PROXY
 } = require('./constants/serverConstants');
 const { HTTP_500_INTERNAL_SERVER_ERROR } = require('./constants/statusCodes');
+const { NUMBER_OF_USERS } = require('./constants/usersConstants');
 const { NUMBER_OF_HANGARS } = require('./constants/hangarConstants');
 
 // initialize new express application
@@ -34,6 +35,7 @@ app.use(express.static(__dirname + '/' + PUBLIC));
 
 // initialize collection count for hangars
 app.set(NUMBER_OF_HANGARS, 0);
+app.set(NUMBER_OF_USERS, 0);
 
 // routers
 app.use('/auth', authRouter);

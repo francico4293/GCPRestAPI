@@ -37,8 +37,7 @@ const {
 const { removeExtraSpacingFromString } = require('../utilities/formattingUtils');
 const { 
     CONTENT_TYPE, 
-    APPLICATION_JSON, 
-    ANY_MIME_TYPE,
+    APPLICATION_JSON,
     ALLOW,
     GET,
     POST
@@ -87,8 +86,8 @@ router.post('/', isJwtValid, async (req, res, next) => {
                 .json({ 'Error': 'This endpoint only accepts application/json' });
         }
 
-        // verify accept header is */* or application/json
-        if (!isReqHeaderValid(req.headers.accept, APPLICATION_JSON, ANY_MIME_TYPE)) {
+        // verify accept header is application/json
+        if (!isReqHeaderValid(req.headers.accept, APPLICATION_JSON)) {
             return res.status(HTTP_406_NOT_ACCEPTABLE)
                 .set(CONTENT_TYPE, APPLICATION_JSON)
                 .json({ 'Error': 'This endpoint only serves application/json' });
@@ -161,8 +160,8 @@ router.get('/', isJwtValid, async (req, res, next) => {
                 .json({ "Error": "Bearer token is missing or invalid" });
         }
 
-        // verify accept header is */* or application/json
-        if (!isReqHeaderValid(req.headers.accept, APPLICATION_JSON, ANY_MIME_TYPE)) {
+        // verify accept header is application/json
+        if (!isReqHeaderValid(req.headers.accept, APPLICATION_JSON)) {
             return res.status(HTTP_406_NOT_ACCEPTABLE)
                 .set(CONTENT_TYPE, APPLICATION_JSON)
                 .json({ 'Error': 'This endpoint only serves application/json' });
@@ -236,8 +235,8 @@ router.get('/:aircraftId', isJwtValid, async (req, res, next) => {
                 .json({ "Error": "Bearer token is missing or invalid" });
         }
 
-        // verify accept header is */* or application/json
-        if (!isReqHeaderValid(req.headers.accept, APPLICATION_JSON, ANY_MIME_TYPE)) {
+        // verify accept header is application/json
+        if (!isReqHeaderValid(req.headers.accept, APPLICATION_JSON)) {
             return res.status(HTTP_406_NOT_ACCEPTABLE)
                 .set(CONTENT_TYPE, APPLICATION_JSON)
                 .json({ 'Error': 'This endpoint only serves application/json' });
@@ -300,8 +299,8 @@ router.patch('/:aircraftId', isJwtValid, async (req, res, next) => {
                 .json({ 'Error': 'This endpoint only accepts application/json' });
         }
 
-        // verify accept header is */* or application/json
-        if (!isReqHeaderValid(req.headers.accept, APPLICATION_JSON, ANY_MIME_TYPE)) {
+        // verify accept header is application/json
+        if (!isReqHeaderValid(req.headers.accept, APPLICATION_JSON)) {
             return res.status(HTTP_406_NOT_ACCEPTABLE)
                 .set(CONTENT_TYPE, APPLICATION_JSON)
                 .json({ 'Error': 'This endpoint only serves application/json' });
@@ -399,8 +398,8 @@ router.put('/:aircraftId', isJwtValid, async (req, res, next) => {
                 .json({ 'Error': 'This endpoint only accepts application/json' });
         }
 
-        // verify accept header is */* or application/json
-        if (!isReqHeaderValid(req.headers.accept, APPLICATION_JSON, ANY_MIME_TYPE)) {
+        // verify accept header is application/json
+        if (!isReqHeaderValid(req.headers.accept, APPLICATION_JSON)) {
             return res.status(HTTP_406_NOT_ACCEPTABLE)
                 .set(CONTENT_TYPE, APPLICATION_JSON)
                 .json({ 'Error': 'This endpoint only serves application/json' });

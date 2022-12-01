@@ -12,8 +12,6 @@ const APPLICATION_JSON = 'application/json';
 
 const CONTENT_TYPE = 'content-type';
 
-const ANY_MIME_TYPE = '*/*';
-
 const ALLOW = 'Allow';
 
 const GET = 'GET';
@@ -26,8 +24,7 @@ module.exports = {
     LOCAL_HOST,
     TRUST_PROXY,
     APPLICATION_JSON, 
-    CONTENT_TYPE, 
-    ANY_MIME_TYPE,
+    CONTENT_TYPE,
     ALLOW,
     GET,
     POST

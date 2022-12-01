@@ -30,6 +30,7 @@ const {
     ERROR, 
     USER_INFO 
 } = require('../constants/handlebarConstants');
+const { NUMBER_OF_USERS } = require('../constants/usersConstants');
 
 // instantiate new router object
 const router = express.Router();
@@ -90,6 +91,9 @@ router.get('/oauth', isStateValid, async (req, res) => {
 
         // create the user in datastore
         await createUser(jwt.sub, userInfo.names[0].givenName, userInfo.names[0].familyName);
+
+        // increment number of users
+        req.app.set(NUMBER_OF_USERS, req.app.get(NUMBER_OF_USERS) + 1);
 
         // render user info view with end-user's given name and their JSON web token
         res.render(
